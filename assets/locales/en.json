@@ -379,6 +379,7 @@
     "nav_bar": {
       "data": "Data",
       "activity": "Activity",
+      "mfa": "2FA",
       "notifications": "Notifications",
       "more": "More",
       "scan_qr": "Scan QR"
@@ -386,6 +387,7 @@
     "nav_bar_hints": {
       "data": "tab 1 out of 4",
       "activity": "tab 2 out of 4",
+      "mfa": "Whoops, forgot to implement this",
       "notifications": "tab 3 out of 4",
       "more": "tab 4 out of 4"
     }

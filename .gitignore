@@ -102,3 +102,4 @@ android/irmagobridge/irmagobridge-sources.jar
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 devtools_options.yaml
 
+/android/app/src/main/assets/irma_configuration

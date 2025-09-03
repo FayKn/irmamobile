@@ -11,6 +11,7 @@ enum IrmaNavBarTab {
   data,
   activity,
   notifications,
+  mfa,
   more,
 }
 
@@ -63,7 +64,7 @@ class IrmaNavBar extends StatelessWidget {
             isSelected: IrmaNavBarTab.data == selectedTab,
           ),
           IrmaNavButton(
-            key: const Key('nav_button_activity'),
+            key: const Key('nav_button_mfa'),
             iconData: Icons.history,
             tab: IrmaNavBarTab.activity,
             changeTab: onChangeTab,
@@ -72,6 +73,13 @@ class IrmaNavBar extends StatelessWidget {
           // Spacing for the QR scan button
           const SizedBox(
             width: 90,
+          ),
+          IrmaNavButton(
+            key: const Key('nav_button_activity'),
+            iconData: Icons.key,
+            tab: IrmaNavBarTab.mfa,
+            changeTab: onChangeTab,
+            isSelected: IrmaNavBarTab.mfa == selectedTab,
           ),
           IrmaNavButton(
             key: const Key('nav_button_notifications'),

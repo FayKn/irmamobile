@@ -7,6 +7,7 @@ import '../../theme/theme.dart';
 import '../../util/rounded_display.dart';
 import '../activity/activity_tab.dart';
 import '../data/data_tab.dart';
+import '../mfa/mfa_tab.dart';
 import '../more/more_tab.dart';
 import '../notifications/notifications_tab.dart';
 import 'widgets/irma_nav_bar.dart';
@@ -55,6 +56,7 @@ class HomeScreen extends StatelessWidget {
                 IrmaNavBarTab.notifications => NotificationsTab(),
                 IrmaNavBarTab.data => DataTab(),
                 IrmaNavBarTab.activity => ActivityTab(),
+                IrmaNavBarTab.mfa => MfaTab(),
                 IrmaNavBarTab.more => MoreTab(onChangeTab: changeTab),
               },
               floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

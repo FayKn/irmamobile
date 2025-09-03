@@ -379,6 +379,7 @@
     "nav_bar": {
       "data": "Gegevens",
       "activity": "Activiteit",
+      "mfa": "2FA",
       "notifications": "Notificaties",
       "more": "Meer",
       "scan_qr": "Scan QR"
@@ -386,6 +387,7 @@
     "nav_bar_hints": {
       "data": "tab 1 van 4",
       "activity": "tab 2 van 4",
+      "mfa": "oepsie vergeten te veranderen",
       "notifications": "tab 3 van 4",
       "more": "tab 4 van 4"
     }
