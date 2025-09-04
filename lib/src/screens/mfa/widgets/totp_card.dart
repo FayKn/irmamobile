@@ -27,11 +27,13 @@ class TotpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
     final double containerWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
+    var stringCurrentCode = currentCode.toString().padLeft(6, '0');
+    var stringNextCode = nextCode.toString().padLeft(6, '0');
 
     return GestureDetector(
       onTap: () {
         Clipboard.setData(
-          ClipboardData(text: currentCode.toString().padLeft(6, '0')),
+          ClipboardData(text: stringCurrentCode),
         );
       },
       child: Container(
@@ -69,12 +71,12 @@ class TotpCard extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  spacing: theme.defaultSpacing,
                   children: [
                     Row(
                       spacing: theme.defaultSpacing,
                       children: [
-                        // TODO: replace with local assets though a sub repo of simpleicons to allow offline use
+                        // TODO: replace with local assets though a sub repo of simple-icons to allow offline use
                         SvgPicture.network(
                           height: 40,
                           width: 40,
@@ -92,44 +94,41 @@ class TotpCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            RichText(
-                              text: TextSpan(
-                                text: userName,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontSize: 8,
-                                  decoration: TextDecoration.underline,
-                                  color: theme.neutralExtraDark,
-                                ),
-                              ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text: currentCode.toString().padLeft(6, '0'),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              userName,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontSize: 8,
+                                decoration: TextDecoration.underline,
+                                color: theme.neutralExtraDark,
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end, spacing: theme.smallSpacing ,
-                      children: [
-                        Icon(Icons.copy, color: theme.neutralExtraDark),
-                        TranslatedText(
-                          'mfa.nextCode',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: 8,
-                            color: theme.neutralExtraDark,
+                    Row(spacing: theme.smallSpacing, children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            stringCurrentCode,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          translationParams: {'code': nextCode.toString().padLeft(6, '0')},
-                        ),
-                      ]
-                    )
-
+                          TranslatedText(
+                            'mfa.nextCode',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 8,
+                              color: theme.neutralExtraDark,
+                            ),
+                            translationParams: {'code': stringNextCode},
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.copy, color: theme.neutralExtraDark),
+                    ])
                   ],
                 ),
               ),
