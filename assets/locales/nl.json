@@ -684,5 +684,8 @@
         }
       }
     }
+  },
+  "mfa": {
+    "nextCode": "Volgende code: {code}"
   }
 }

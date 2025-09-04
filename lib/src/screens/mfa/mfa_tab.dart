@@ -184,6 +184,7 @@ class _MfaTabState extends State<MfaTab> {
                     currentCode: entry.value['code'],
                     period: entry.value['period'],
                     timerProgress: entry.value['timerProgress'],
+                    nextCode: entry.value['nextCode']
                   ),
                 )
                     .toList())));

@@ -684,5 +684,8 @@
         "content": "Are you sure you want to delete all credentials?"
       }
     }
+  },
+  "mfa": {
+    "nextCode": "Next code: {code}"
   }
 }
