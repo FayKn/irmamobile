@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../theme/theme.dart';
 import '../../../widgets/translated_text.dart';
-import 'service_icon.dart';
 
 class TotpCard extends StatelessWidget {
   final String serviceName;
@@ -29,8 +28,14 @@ class TotpCard extends StatelessWidget {
     final theme = IrmaTheme.of(context);
     final double containerWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
 
-    return Container(
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () {
+        Clipboard.setData(
+          ClipboardData(text: currentCode.toString().padLeft(6, '0')),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: theme.borderRadius,
           border: Border.all(width: 0, color: Colors.transparent),
           color: theme.light,
@@ -40,63 +45,98 @@ class TotpCard extends StatelessWidget {
               offset: const Offset(0.0, 1.0),
               blurRadius: 6.0,
             )
-          ]),
-      child: ClipRRect(
+          ],
+        ),
+        child: ClipRRect(
           borderRadius: theme.borderRadius,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // Timer bar
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.linear,
-              color: theme.primary,
-              alignment: Alignment.topLeft,
-              width: containerWidth - (timerProgress / period) * containerWidth,
-              height: 5,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Timer bar
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 1000),
+                curve: Curves.linear,
+                color: theme.primary,
+                alignment: Alignment.topLeft,
+                width: containerWidth - (timerProgress / period) * containerWidth,
+                height: 5,
+              ),
 
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: theme.defaultSpacing, vertical: theme.defaultSpacing / 2),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: theme.defaultSpacing,
+                  vertical: theme.smallSpacing,
+                ),
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(spacing: theme.defaultSpacing, children: [
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      spacing: theme.defaultSpacing,
+                      children: [
+                        // TODO: replace with local assets though a sub repo of simpleicons to allow offline use
                         SvgPicture.network(
                           height: 40,
                           width: 40,
                           'https://cdn.simpleicons.org/$serviceName',
                           semanticsLabel: '$serviceName Logo',
                         ),
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          RichText(
-                            text: TextSpan(
-                              text: serviceName,
-                              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: serviceName,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: userName,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                  fontSize: 8, decoration: TextDecoration.underline, color: theme.neutralExtraDark),
+                            RichText(
+                              text: TextSpan(
+                                text: userName,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 8,
+                                  decoration: TextDecoration.underline,
+                                  color: theme.neutralExtraDark,
+                                ),
+                              ),
                             ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: currentCode.toString().padLeft(6, '0'),
-                              style: theme.textTheme.titleMedium?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+                            RichText(
+                              text: TextSpan(
+                                text: currentCode.toString().padLeft(6, '0'),
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end, spacing: theme.smallSpacing ,
+                      children: [
+                        Icon(Icons.copy, color: theme.neutralExtraDark),
+                        TranslatedText(
+                          'mfa.nextCode',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 8,
+                            color: theme.neutralExtraDark,
                           ),
-                          TranslatedText(
-                            'mfa.nextCode',
-                            style: theme.textTheme.titleMedium?.copyWith(fontSize: 8, color: theme.neutralExtraDark),
-                            translationParams: {'code': nextCode.toString().padLeft(6, '0')},
-                          ),
-                        ]),
-                      ]),
-                      Icon(Icons.copy, color: theme.neutralExtraDark),
-                    ])),
-          ])),
+                          translationParams: {'code': nextCode.toString().padLeft(6, '0')},
+                        ),
+                      ]
+                    )
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
