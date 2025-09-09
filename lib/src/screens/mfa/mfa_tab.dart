@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:base32/base32.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import '../../models/mfa_credentials.dart';
 
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
@@ -16,7 +17,7 @@ class MfaTab extends StatefulWidget {
 
 class _MfaTabState extends State<MfaTab> {
   Timer? _ticker;
-  Map<String, Map<String, dynamic>> codes = {};
+  Map<String, MFASecret> codes = {};
 
   @override
   void initState() {
@@ -37,56 +38,71 @@ class _MfaTabState extends State<MfaTab> {
     // In a real app, this would fetch from a backend or local storage
     // Demo data
     codes = {
-      '64NAVGZ5PMPBNQCU': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Cloudflare',
-        'period': 30,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      '2L7MBIKPJ2V3NKKW': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Discord',
-        'period': 30,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      'FQHR4UH4PT3SMAIN': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Slack',
-        'period': 30,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      '2MF4SAKOQQK7DZ2Z': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Github',
-        'period': 30,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      '5CBXXQXE4Q6WZ3C6': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'OpenAI',
-        'period': 30,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      'YCCR4IJAG2STUHEP': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Cloudflare',
-        'period': 15,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },      'JAR4UXFVWAODQID3': {
-        'name': 'fay@fayk.nl',
-        'issuer': 'Cloudflare',
-        'period': 60,
-        'timerProgress': 0,
-        'code': 123456,
-        'nextCode': 654321,
-      },
+      '64NAVGZ5PMPBNQCU': MFASecret(
+        issuer: 'Cloudflare',
+        secret: '',
+        // replace with actual base32 secret
+        period: 30,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        // empty to be replaced later
+        nextCode: null, // empty to be replaced later
+      ),
+      '2L7MBIKPJ2V3NKKW': MFASecret(
+        issuer: 'Discord',
+        secret: '',
+        period: 30,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
+      'FQHR4UH4PT3SMAIN': MFASecret(
+        issuer: 'Slack',
+        secret: '',
+        period: 30,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
+      '2MF4SAKOQQK7DZ2Z': MFASecret(
+        issuer: 'Github',
+        secret: '',
+        period: 30,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
+      '5CBXXQXE4Q6WZ3C6': MFASecret(
+        issuer: 'OpenAI',
+        secret: '',
+        period: 30,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
+      'YCCR4IJAG2STUHEP': MFASecret(
+        issuer: 'Cloudflare',
+        secret: '',
+        period: 15,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
+      'JAR4UXFVWAODQID3': MFASecret(
+        issuer: 'Cloudflare',
+        secret: '',
+        period: 60,
+        userAccount: 'fay@fayk.nl',
+        timerProgress: 0,
+        code: null,
+        nextCode: null,
+      ),
     };
   }
 
@@ -100,9 +116,9 @@ class _MfaTabState extends State<MfaTab> {
     int offset = hash[hash.length - 1] & 0xf;
 
     int binary = ((hash[offset] & 0x7f) << 24) |
-    ((hash[offset + 1] & 0xff) << 16) |
-    ((hash[offset + 2] & 0xff) << 8) |
-    (hash[offset + 3] & 0xff);
+        ((hash[offset + 1] & 0xff) << 16) |
+        ((hash[offset + 2] & 0xff) << 8) |
+        (hash[offset + 3] & 0xff);
 
     return binary % 1000000;
   }
@@ -120,16 +136,16 @@ class _MfaTabState extends State<MfaTab> {
   void _initCodes() {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     codes.forEach((key, value) {
-      value['code'] = generateTOTPCode(
+      value.code = generateTOTPCode(
         key,
-        value['period'] as int,
+        value.period,
         now,
       );
-      value['timerProgress'] = now % (value['period'] as int);
-      value['nextCode'] = generateTOTPCode(
+      value.timerProgress = now % value.period;
+      value.nextCode = generateTOTPCode(
         key,
-        value['period'] as int,
-        now + (value['period'] as int),
+        value.period,
+        now + value.period,
       );
     });
   }
@@ -140,17 +156,15 @@ class _MfaTabState extends State<MfaTab> {
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       setState(() {
         codes.forEach((key, value) {
-          final period = value['period'] as int;
+          final period = value.period;
           final elapsed = now % period;
-          // always update visible progress
-          value['timerProgress'] = elapsed;
-          // recompute current and next codes (cheap enough for small lists)
-          value['code'] = generateTOTPCode(
+          value.timerProgress = elapsed;
+          value.code = generateTOTPCode(
             key,
             period,
             now,
           );
-          value['nextCode'] = generateTOTPCode(
+          value.nextCode = generateTOTPCode(
             key,
             period,
             now + period,
@@ -165,28 +179,41 @@ class _MfaTabState extends State<MfaTab> {
     final theme = IrmaTheme.of(context);
 
     return Scaffold(
-        backgroundColor: IrmaTheme.of(context).backgroundTertiary,
-        appBar: IrmaAppBar(
-          titleTranslationKey: 'home.nav_bar.mfa',
-          leading: null,
+      backgroundColor: IrmaTheme.of(context).backgroundTertiary,
+      appBar: IrmaAppBar(
+        titleTranslationKey: 'home.nav_bar.mfa',
+        leading: null,
+      ),
+      body: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.all(theme.defaultSpacing),
+          child: Column(
+              spacing: theme.defaultSpacing,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: codes.entries
+                  .map(
+                    (entry) => TotpCard(
+                      serviceName: entry.value.issuer,
+                      userName: entry.value.userAccount,
+                      currentCode: entry.value.code ?? 0,
+                      period: entry.value.period,
+                      timerProgress: entry.value.timerProgress,
+                      nextCode: entry.value.nextCode ?? 0,
+                    ),
+                  )
+                  .toList())),
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(
+          side: BorderSide(
+            color: theme.primary,
+            width: 4.0,
+          ),
         ),
-        body: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(theme.defaultSpacing),
-            child: Column(
-                spacing: theme.defaultSpacing,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: codes.entries
-                    .map(
-                      (entry) => TotpCard(
-                      serviceName: entry.value['issuer'],
-                      userName: entry.value['name'],
-                      currentCode: entry.value['code'],
-                      period: entry.value['period'],
-                      timerProgress: entry.value['timerProgress'],
-                      nextCode: entry.value['nextCode']
-                  ),
-                )
-                    .toList())));
+        onPressed: () {
+          // Add your onPressed code here!
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }

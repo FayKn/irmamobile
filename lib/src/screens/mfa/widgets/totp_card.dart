@@ -28,7 +28,9 @@ class TotpCard extends StatelessWidget {
     final theme = IrmaTheme.of(context);
     final double containerWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
     var stringCurrentCode = currentCode.toString().padLeft(6, '0');
+    stringCurrentCode = '${stringCurrentCode.substring(0, 3)} ${stringCurrentCode.substring(3, 6)}';
     var stringNextCode = nextCode.toString().padLeft(6, '0');
+    stringNextCode = '${stringNextCode.substring(0, 3)} ${stringNextCode.substring(3, 6)}';
 
     return GestureDetector(
       onTap: () {
@@ -86,18 +88,17 @@ class TotpCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(
-                              text: TextSpan(
-                                text: serviceName,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              serviceName,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
                               ),
                             ),
                             Text(
                               userName,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 8,
+                                fontSize: 10,
                                 decoration: TextDecoration.underline,
                                 color: theme.neutralExtraDark,
                               ),
@@ -113,14 +114,14 @@ class TotpCard extends StatelessWidget {
                           Text(
                             stringCurrentCode,
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 20,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           TranslatedText(
                             'mfa.nextCode',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 8,
+                              fontSize: 10,
                               color: theme.neutralExtraDark,
                             ),
                             translationParams: {'code': stringNextCode},
