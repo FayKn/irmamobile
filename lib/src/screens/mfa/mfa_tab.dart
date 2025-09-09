@@ -106,11 +106,20 @@ class _MfaTabState extends State<MfaTab> {
     };
   }
 
-  int generateTOTPCode(String secret, int period, int currentTime) {
-    var currenTimeBytes = _intToBytes(currentTime ~/ period);
-    var decodedSecret = base32.decode(secret);
+  int generateTOTPCode(MFASecret secret, int currentTime) {
+    var currenTimeBytes = _intToBytes(currentTime ~/ secret.period);
+    var decodedSecret = base32.decode(secret.secret);
 
-    var hmac = Hmac(sha1, decodedSecret); // HMAC-SHA1
+    Hmac hmac;
+    switch (secret.algorithm) {
+      case 'SHA256':
+        hmac = Hmac(sha256, decodedSecret); // HMAC-SHA256
+      case 'SHA512':
+        hmac = Hmac(sha512, decodedSecret); // HMAC-SHA512
+      default:
+        hmac = Hmac(sha1, decodedSecret); // HMAC-SHA1
+    }
+
     var hash = hmac.convert(currenTimeBytes).bytes;
 
     int offset = hash[hash.length - 1] & 0xf;
@@ -137,15 +146,13 @@ class _MfaTabState extends State<MfaTab> {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     codes.forEach((key, value) {
       value.code = generateTOTPCode(
-        key,
-        value.period,
-        now,
+        value,
+        now
       );
       value.timerProgress = now % value.period;
       value.nextCode = generateTOTPCode(
-        key,
-        value.period,
-        now + value.period,
+          value,
+          now
       );
     });
   }
@@ -160,14 +167,12 @@ class _MfaTabState extends State<MfaTab> {
           final elapsed = now % period;
           value.timerProgress = elapsed;
           value.code = generateTOTPCode(
-            key,
-            period,
-            now,
+              value,
+              now
           );
           value.nextCode = generateTOTPCode(
-            key,
-            period,
-            now + period,
+              value,
+              now
           );
         });
       });
