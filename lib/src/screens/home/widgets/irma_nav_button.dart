@@ -8,6 +8,7 @@ import 'irma_nav_bar.dart';
 final _navBarTabTranslationKeys = {
   IrmaNavBarTab.data: 'home.nav_bar.data',
   IrmaNavBarTab.activity: 'home.nav_bar.activity',
+  IrmaNavBarTab.mfa: 'home.nav_bar.mfa',
   IrmaNavBarTab.notifications: 'home.nav_bar.notifications',
   IrmaNavBarTab.more: 'home.nav_bar.more'
 };
@@ -15,6 +16,7 @@ final _navBarTabTranslationKeys = {
 final _navBarTabHintKeys = {
   IrmaNavBarTab.data: 'home.nav_bar_hints.data',
   IrmaNavBarTab.activity: 'home.nav_bar_hints.activity',
+  IrmaNavBarTab.mfa: 'home.nav_bar_hints.mfa',
   IrmaNavBarTab.notifications: 'home.nav_bar_hints.notifications',
   IrmaNavBarTab.more: 'home.nav_bar_hints.more'
 };
