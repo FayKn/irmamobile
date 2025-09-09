@@ -613,6 +613,9 @@
     "header": "IRMA heeft een nieuwe naam en een nieuw uiterlijk gekregen: Yivi",
     "explanation": "Onder de motorkap is alles hetzelfde gebleven, je kunt gewoon inloggen met je oude PIN-code."
   },
+  "mfa": {
+    "nextCode": "Volgende code: {code}"
+  },
   "notifications": {
     "title": "Notificaties",
     "empty": "Geen notificaties",
