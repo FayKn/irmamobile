@@ -1,13 +1,17 @@
 // dart
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:base32/base32.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../models/mfa_credentials.dart';
 
 import '../../theme/theme.dart';
+import '../../util/navigation.dart';
 import '../../widgets/irma_app_bar.dart';
+import '../../widgets/irma_icon_button.dart';
 import 'widgets/totp_card.dart';
 
 class MfaTab extends StatefulWidget {
@@ -17,13 +21,14 @@ class MfaTab extends StatefulWidget {
 
 class _MfaTabState extends State<MfaTab> {
   Timer? _ticker;
-  Map<String, MFASecret> codes = {};
+  List<MFASecret> codes = [];
 
   @override
   void initState() {
     super.initState();
     _getCodes();
-    _initCodes();
+    // run this once to initialize codes so we don't have a second where the codes are 000000
+    _generateCodes();
     _startCodeTimers();
   }
 
@@ -37,10 +42,10 @@ class _MfaTabState extends State<MfaTab> {
     // temporary function to simulate fetching codes
     // In a real app, this would fetch from a backend or local storage
     // Demo data
-    codes = {
-      '64NAVGZ5PMPBNQCU': MFASecret(
+    codes = [
+      MFASecret(
         issuer: 'Cloudflare',
-        secret: '',
+        secret: '64NAVGZ5PMPBNQCU',
         // replace with actual base32 secret
         period: 30,
         userAccount: 'fay@fayk.nl',
@@ -49,61 +54,61 @@ class _MfaTabState extends State<MfaTab> {
         // empty to be replaced later
         nextCode: null, // empty to be replaced later
       ),
-      '2L7MBIKPJ2V3NKKW': MFASecret(
+      MFASecret(
         issuer: 'Discord',
-        secret: '',
+        secret: 'NUOLQ2UTZCA3PO6Q',
         period: 30,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-      'FQHR4UH4PT3SMAIN': MFASecret(
+      MFASecret(
         issuer: 'Slack',
-        secret: '',
+        secret: 'PZELTFR5RJNVV5T6',
         period: 30,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-      '2MF4SAKOQQK7DZ2Z': MFASecret(
+      MFASecret(
         issuer: 'Github',
-        secret: '',
+        secret: 'UKXQHODNS57YKZCO',
         period: 30,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-      '5CBXXQXE4Q6WZ3C6': MFASecret(
+      MFASecret(
         issuer: 'OpenAI',
-        secret: '',
+        secret: 'M4QNZ5ZZAMMUCLUD',
         period: 30,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-      'YCCR4IJAG2STUHEP': MFASecret(
+      MFASecret(
         issuer: 'Cloudflare',
-        secret: '',
+        secret: 'PH37OLAT26PUHUY7',
         period: 15,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-      'JAR4UXFVWAODQID3': MFASecret(
+      MFASecret(
         issuer: 'Cloudflare',
-        secret: '',
+        secret: 'HLPGZ4VBFWXY5SI5',
         period: 60,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
         nextCode: null,
       ),
-    };
+    ];
   }
 
   int generateTOTPCode(MFASecret secret, int currentTime) {
@@ -142,9 +147,9 @@ class _MfaTabState extends State<MfaTab> {
     return byteArray;
   }
 
-  void _initCodes() {
+  void _generateCodes() {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    codes.forEach((key, value) {
+    for (var value in codes) {
       value.code = generateTOTPCode(
         value,
         now
@@ -152,29 +157,16 @@ class _MfaTabState extends State<MfaTab> {
       value.timerProgress = now % value.period;
       value.nextCode = generateTOTPCode(
           value,
-          now
+          now + (value.period - value.timerProgress)
       );
-    });
+    }
   }
 
   void _startCodeTimers() {
     _ticker?.cancel();
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       setState(() {
-        codes.forEach((key, value) {
-          final period = value.period;
-          final elapsed = now % period;
-          value.timerProgress = elapsed;
-          value.code = generateTOTPCode(
-              value,
-              now
-          );
-          value.nextCode = generateTOTPCode(
-              value,
-              now
-          );
-        });
+        _generateCodes();
       });
     });
   }
@@ -188,6 +180,13 @@ class _MfaTabState extends State<MfaTab> {
       appBar: IrmaAppBar(
         titleTranslationKey: 'home.nav_bar.mfa',
         leading: null,
+        actions: [
+          IrmaIconButton(
+            icon: CupertinoIcons.add_circled_solid,
+            size: 28,
+            onTap: context.pushAddDataScreen,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
@@ -195,15 +194,14 @@ class _MfaTabState extends State<MfaTab> {
           child: Column(
               spacing: theme.defaultSpacing,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: codes.entries
-                  .map(
-                    (entry) => TotpCard(
-                      serviceName: entry.value.issuer,
-                      userName: entry.value.userAccount,
-                      currentCode: entry.value.code ?? 0,
-                      period: entry.value.period,
-                      timerProgress: entry.value.timerProgress,
-                      nextCode: entry.value.nextCode ?? 0,
+              children: codes.map(
+                    (code) => TotpCard(
+                      serviceName: code.issuer,
+                      userName: code.userAccount,
+                      currentCode: code.code ?? 0,
+                      period: code.period,
+                      timerProgress: code.timerProgress,
+                      nextCode: code.nextCode ?? 0,
                     ),
                   )
                   .toList())),

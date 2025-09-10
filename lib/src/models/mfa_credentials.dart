@@ -10,7 +10,7 @@ class MFASecret {
 
   MFASecret({
     required this.issuer,
-    this.secret = '',
+    required this.secret,
     required this.period,
     required this.userAccount,
     this.algorithm = 'SHA1',
