@@ -127,6 +127,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onChanged: repo.setDeveloperMode,
                         stream: repo.getDeveloperMode(),
                       ),
+                      ToggleTile(
+                        key: const Key('Experimental_features_toggle'),
+                        labelTranslationKey: 'settings.experimental_features',
+                        onChanged: repo.preferences.setExperimentalFeatures,
+                        stream: repo.preferences.getExperimentalFeatures(),
+                      )
                     ],
                   ),
                 ),

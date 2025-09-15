@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../providers/irma_repository_provider.dart';
 import '../../../theme/theme.dart';
 import '../../../util/rounded_display.dart';
 import '../../notifications/bloc/notifications_bloc.dart';
@@ -28,6 +29,7 @@ class IrmaNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
+    final repo = IrmaRepositoryProvider.of(context);
 
     return Container(
       padding: EdgeInsets.only(
@@ -74,12 +76,21 @@ class IrmaNavBar extends StatelessWidget {
           const SizedBox(
             width: 90,
           ),
-          IrmaNavButton(
-            key: const Key('nav_button_mfa'),
-            iconData: Icons.key,
-            tab: IrmaNavBarTab.mfa,
-            changeTab: onChangeTab,
-            isSelected: IrmaNavBarTab.mfa == selectedTab,
+          FutureBuilder<bool>(
+            future: repo.preferences.getExperimentalFeatures().first,
+            initialData: false,
+            builder: (context, snapshot) {
+              final enabled = snapshot.data ?? false;
+              return enabled
+                  ? IrmaNavButton(
+                key: const Key('nav_button_mfa'),
+                iconData: Icons.key,
+                tab: IrmaNavBarTab.mfa,
+                changeTab: onChangeTab,
+                isSelected: IrmaNavBarTab.mfa == selectedTab,
+              )
+                  : const SizedBox.shrink();
+            },
           ),
           IrmaNavButton(
             key: const Key('nav_button_notifications'),

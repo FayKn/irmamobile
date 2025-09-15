@@ -4,6 +4,16 @@ class IrmaPreferences {
   final String mostRecentTermsUrlNl;
   final String mostRecentTermsUrlEn;
 
+  static Future<IrmaPreferences> fromInstance({
+    required String mostRecentTermsUrlNl,
+    required String mostRecentTermsUrlEn,
+  }) async =>
+      IrmaPreferences(
+        await StreamingSharedPreferences.instance,
+        mostRecentTermsUrlNl: mostRecentTermsUrlNl,
+        mostRecentTermsUrlEn: mostRecentTermsUrlEn,
+      );
+
   IrmaPreferences(
     StreamingSharedPreferences preferences, {
     required this.mostRecentTermsUrlNl,
@@ -22,22 +32,13 @@ class IrmaPreferences {
         _showNameChangedNotification = preferences.getBool(_showNameChangedNotificationKey, defaultValue: true),
         _lastSchemeUpdate = preferences.getInt(_lastSchemeUpdateKey, defaultValue: 0),
         _serializedNotifications = preferences.getString(_serializedNotificationsKey, defaultValue: ''),
+        _enableExperiamentalFeatures = preferences.getBool(_enableExperiamentalFeaturesKey, defaultValue: false),
         _credentialOrder = preferences.getStringList(_credentialOrderKey, defaultValue: []) {
     // Remove unused IRMA -> Yivi name change notification key
     preferences.remove(_showNameChangeNotificationKey);
     // Remove old value for displaying the dev mode toggle
     preferences.remove(_developerModePrefVisibleKey);
   }
-
-  static Future<IrmaPreferences> fromInstance({
-    required String mostRecentTermsUrlNl,
-    required String mostRecentTermsUrlEn,
-  }) async =>
-      IrmaPreferences(
-        await StreamingSharedPreferences.instance,
-        mostRecentTermsUrlNl: mostRecentTermsUrlNl,
-        mostRecentTermsUrlEn: mostRecentTermsUrlEn,
-      );
 
   // =============================================================================
 
@@ -79,6 +80,9 @@ class IrmaPreferences {
   // Used to store all notifications
   static const String _serializedNotificationsKey = 'preference.notifications';
   final Preference<String> _serializedNotifications;
+
+  static const String _enableExperiamentalFeaturesKey = 'preference.enable_experimental_features';
+  final Preference<bool> _enableExperiamentalFeatures;
 
   static const String _acceptedTermsUrlKey = 'preference.accepted_terms_url';
   final Preference<String> _acceptedTermsUrl;
@@ -131,6 +135,9 @@ class IrmaPreferences {
   Stream<String> getSerializedNotifications() => _serializedNotifications;
 
   Future<bool> setSerializedNotifications(String value) => _serializedNotifications.setValue(value);
+
+  Stream<bool> getExperimentalFeatures() => _enableExperiamentalFeatures;
+  Future<bool> setExperimentalFeatures(bool value) => _enableExperiamentalFeatures.setValue(value);
 
   Stream<bool> hasAcceptedLatestTerms() => _acceptedTermsUrl.map((url) => url == mostRecentTermsUrlNl);
 

@@ -568,6 +568,7 @@
     "enable_screenshots": "Enable screenshots",
     "enable_screenshots_explanation": "When enabled, the app will not be blurred in the app switcher.",
     "developer_mode": "Developer mode",
+    "experimental_features": "Experimental features",
     "other": "Other",
     "language": "Language",
     "use_system_language": "Use system language",
