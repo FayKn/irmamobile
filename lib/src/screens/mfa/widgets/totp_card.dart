@@ -26,11 +26,19 @@ class TotpCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
-    final double containerWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
+    final double containerWidth = MediaQuery
+        .of(context)
+        .size
+        .width - theme.defaultSpacing * 2;
+
     var stringCurrentCode = currentCode.toString().padLeft(6, '0');
-    stringCurrentCode = '${stringCurrentCode.substring(0, 3)} ${stringCurrentCode.substring(3, 6)}';
     var stringNextCode = nextCode.toString().padLeft(6, '0');
-    stringNextCode = '${stringNextCode.substring(0, 3)} ${stringNextCode.substring(3, 6)}';
+    var codeLength = currentCode.toString().length;
+
+    var halfLength = (codeLength / 2).ceil();
+
+    stringCurrentCode = '${stringCurrentCode.substring(0, halfLength)} ${stringCurrentCode.substring(halfLength)}';
+    stringNextCode = '${stringNextCode.substring(0, halfLength)} ${stringNextCode.substring(halfLength)}';
 
     return GestureDetector(
       onTap: () {

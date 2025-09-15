@@ -46,13 +46,11 @@ class _MfaTabState extends State<MfaTab> {
       MFASecret(
         issuer: 'Cloudflare',
         secret: '64NAVGZ5PMPBNQCU',
-        // replace with actual base32 secret
         period: 30,
         userAccount: 'fay@fayk.nl',
         timerProgress: 0,
         code: null,
-        // empty to be replaced later
-        nextCode: null, // empty to be replaced later
+        nextCode: null,
       ),
       MFASecret(
         issuer: 'Discord',
