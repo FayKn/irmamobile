@@ -15,6 +15,13 @@ import 'models/notification.dart';
 import 'widgets/notification_card.dart';
 
 class NotificationsTab extends StatefulWidget {
+  final bool isInLogging;
+
+  const NotificationsTab({
+    super.key,
+    this.isInLogging = false,
+  });
+
   @override
   State<NotificationsTab> createState() => _NotificationsTabState();
 }
@@ -94,7 +101,7 @@ class _NotificationsTabState extends State<NotificationsTab> {
       value: BlocProvider.of<NotificationsBloc>(context),
       child: Scaffold(
         backgroundColor: theme.backgroundTertiary,
-        appBar: IrmaAppBar(
+        appBar: widget.isInLogging ? null : IrmaAppBar(
           titleTranslationKey: 'notifications.title',
           leading: null,
         ),

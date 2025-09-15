@@ -28,6 +28,10 @@
     "ok": "OK"
   },
   "activity": {
+    "tab_bar": {
+      "transactions": "Transacties",
+      "notifications": "Notificaties"
+    },
     "data_deleted": "Gegevens verwijderd",
     "data_deleted_semantics": "Gegevens verwijderd van {issuerName} op {date}",
     "data_received": "Gegevens ontvangen",
@@ -382,6 +386,7 @@
     "nav_bar": {
       "data": "Gegevens",
       "activity": "Activiteit",
+      "logging": "Activiteit",
       "mfa": "2FA",
       "notifications": "Notificaties",
       "more": "Meer",
@@ -390,7 +395,8 @@
     "nav_bar_hints": {
       "data": "tab 1 van 4",
       "activity": "tab 2 van 4",
-      "mfa": "oepsie vergeten te veranderen",
+      "logging": "tab 2 van 4",
+      "mfa": "tab 3 van 4",
       "notifications": "tab 3 van 4",
       "more": "tab 4 van 4"
     }

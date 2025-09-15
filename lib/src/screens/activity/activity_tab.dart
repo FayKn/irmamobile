@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,13 @@ import 'history_repository.dart';
 import 'widgets/activity_card.dart';
 
 class ActivityTab extends StatefulWidget {
+
+  final bool isInLogging;
+
+  const ActivityTab({
+    super.key,
+    this.isInLogging = false,
+  });
   @override
   State<ActivityTab> createState() => _ActivityTabState();
 }
@@ -169,7 +177,7 @@ class _ActivityTabState extends State<ActivityTab> {
     _scrollController.addListener(_listenToScroll);
     return Scaffold(
       backgroundColor: IrmaTheme.of(context).backgroundTertiary,
-      appBar: IrmaAppBar(
+      appBar: widget.isInLogging ? null : IrmaAppBar(
         titleTranslationKey: 'home.nav_bar.activity',
         leading: null,
       ),

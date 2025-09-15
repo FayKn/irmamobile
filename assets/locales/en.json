@@ -28,6 +28,10 @@
     "ok": "OK"
   },
   "activity": {
+    "tab_bar": {
+      "transactions": "Transactions",
+      "notifications": "Notifications"
+    },
     "data_deleted": "Data deleted",
     "data_deleted_semantics": "Data deleted from {issuerName} on {date}",
     "data_received": "Data received",
@@ -382,6 +386,7 @@
     "nav_bar": {
       "data": "Data",
       "activity": "Activity",
+      "logging": "Activity",
       "mfa": "2FA",
       "notifications": "Notifications",
       "more": "More",
@@ -390,7 +395,8 @@
     "nav_bar_hints": {
       "data": "tab 1 out of 4",
       "activity": "tab 2 out of 4",
-      "mfa": "Whoops, forgot to implement this",
+      "logging": "tab 2 out of 4",
+      "mfa": "tab 3 out of 4",
       "notifications": "tab 3 out of 4",
       "more": "tab 4 out of 4"
     }

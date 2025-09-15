@@ -13,6 +13,7 @@ enum IrmaNavBarTab {
   activity,
   notifications,
   mfa,
+  logging,
   more,
 }
 
@@ -65,12 +66,37 @@ class IrmaNavBar extends StatelessWidget {
             changeTab: onChangeTab,
             isSelected: IrmaNavBarTab.data == selectedTab,
           ),
-          IrmaNavButton(
-            key: const Key('nav_button_activity'),
-            iconData: Icons.history,
-            tab: IrmaNavBarTab.activity,
-            changeTab: onChangeTab,
-            isSelected: IrmaNavBarTab.activity == selectedTab,
+          FutureBuilder<bool>(
+            future: repo.preferences.getExperimentalFeatures().first,
+            initialData: false,
+            builder: (context, snapshot) {
+              final enabled = snapshot.data ?? false;
+              return enabled
+                  ? IrmaNavButton(
+                      key: const Key('nav_button_logging'),
+                      iconData: Icons.history,
+                      tab: IrmaNavBarTab.logging,
+                      changeTab: onChangeTab,
+                      isSelected: IrmaNavBarTab.logging == selectedTab,
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
+          FutureBuilder<bool>(
+            future: repo.preferences.getExperimentalFeatures().first,
+            initialData: false,
+            builder: (context, snapshot) {
+              final enabled = snapshot.data ?? false;
+              return enabled
+                  ? const SizedBox.shrink()
+                  : IrmaNavButton(
+                      key: const Key('nav_button_activity'),
+                      iconData: Icons.history,
+                      tab: IrmaNavBarTab.activity,
+                      changeTab: onChangeTab,
+                      isSelected: IrmaNavBarTab.activity == selectedTab,
+                    );
+            },
           ),
           // Spacing for the QR scan button
           const SizedBox(
@@ -83,22 +109,33 @@ class IrmaNavBar extends StatelessWidget {
               final enabled = snapshot.data ?? false;
               return enabled
                   ? IrmaNavButton(
-                key: const Key('nav_button_mfa'),
-                iconData: Icons.key,
-                tab: IrmaNavBarTab.mfa,
-                changeTab: onChangeTab,
-                isSelected: IrmaNavBarTab.mfa == selectedTab,
-              )
+                      key: const Key('nav_button_mfa'),
+                      iconData: Icons.key,
+                      tab: IrmaNavBarTab.mfa,
+                      changeTab: onChangeTab,
+                      isSelected: IrmaNavBarTab.mfa == selectedTab,
+                    )
                   : const SizedBox.shrink();
             },
           ),
-          IrmaNavButton(
-            key: const Key('nav_button_notifications'),
-            tab: IrmaNavBarTab.notifications,
-            builder: _buildNotificationsIcon,
-            changeTab: onChangeTab,
-            isSelected: IrmaNavBarTab.notifications == selectedTab,
+
+          FutureBuilder<bool>(
+            future: repo.preferences.getExperimentalFeatures().first,
+            initialData: false,
+            builder: (context, snapshot) {
+              final enabled = snapshot.data ?? false;
+              return enabled
+                  ? const SizedBox.shrink()
+                  : IrmaNavButton(
+                      key: const Key('nav_button_notifications'),
+                      tab: IrmaNavBarTab.notifications,
+                      builder: _buildNotificationsIcon,
+                      changeTab: onChangeTab,
+                      isSelected: IrmaNavBarTab.notifications == selectedTab,
+                    );
+            },
           ),
+
           IrmaNavButton(
             key: const Key('nav_button_more'),
             iconData: Icons.more_horiz,
