@@ -101,10 +101,12 @@ class _NotificationsTabState extends State<NotificationsTab> {
       value: BlocProvider.of<NotificationsBloc>(context),
       child: Scaffold(
         backgroundColor: theme.backgroundTertiary,
-        appBar: widget.isInLogging ? null : IrmaAppBar(
-          titleTranslationKey: 'notifications.title',
-          leading: null,
-        ),
+        appBar: widget.isInLogging
+            ? null
+            : IrmaAppBar(
+                titleTranslationKey: 'notifications.title',
+                leading: null,
+              ),
         body: SafeArea(
           child: BlocBuilder<NotificationsBloc, NotificationsState>(
             builder: (context, state) {

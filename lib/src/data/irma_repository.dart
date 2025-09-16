@@ -296,7 +296,13 @@ class IrmaRepository {
   }
 
   void setDeveloperMode(bool enabled) {
-    bridgedDispatch(ClientPreferencesEvent(clientPreferences: ClientPreferences(developerMode: enabled)));
+    bridgedDispatch(ClientPreferencesEvent(
+        clientPreferences: ClientPreferences(developerMode: enabled, experimentalFeatures: enabled)));
+  }
+
+  void setExperimentalFeatures(bool enabled) {
+    bridgedDispatch(ClientPreferencesEvent(
+        clientPreferences: ClientPreferences(developerMode: enabled, experimentalFeatures: enabled)));
   }
 
   Future<AuthenticationEvent> unlock(String pin) {
@@ -413,6 +419,10 @@ class IrmaRepository {
 
   Stream<bool> getDeveloperMode() {
     return _preferencesSubject.stream.map((pref) => pref.clientPreferences.developerMode);
+  }
+
+  Stream<bool> getExperimentalFeatures() {
+    return _preferencesSubject.stream.map((pref) => pref.clientPreferences.experimentalFeatures);
   }
 
   BehaviorSubject<IssueWizardEvent?> getIssueWizard() {

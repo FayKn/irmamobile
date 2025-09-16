@@ -67,7 +67,7 @@ class IrmaNavBar extends StatelessWidget {
             isSelected: IrmaNavBarTab.data == selectedTab,
           ),
           FutureBuilder<bool>(
-            future: repo.preferences.getExperimentalFeatures().first,
+            future: repo.getExperimentalFeatures().first,
             initialData: false,
             builder: (context, snapshot) {
               final enabled = snapshot.data ?? false;
@@ -83,7 +83,7 @@ class IrmaNavBar extends StatelessWidget {
             },
           ),
           FutureBuilder<bool>(
-            future: repo.preferences.getExperimentalFeatures().first,
+            future: repo.getExperimentalFeatures().first,
             initialData: false,
             builder: (context, snapshot) {
               final enabled = snapshot.data ?? false;
@@ -103,7 +103,7 @@ class IrmaNavBar extends StatelessWidget {
             width: 90,
           ),
           FutureBuilder<bool>(
-            future: repo.preferences.getExperimentalFeatures().first,
+            future: repo.getExperimentalFeatures().first,
             initialData: false,
             builder: (context, snapshot) {
               final enabled = snapshot.data ?? false;
@@ -120,7 +120,7 @@ class IrmaNavBar extends StatelessWidget {
           ),
 
           FutureBuilder<bool>(
-            future: repo.preferences.getExperimentalFeatures().first,
+            future: repo.getExperimentalFeatures().first,
             initialData: false,
             builder: (context, snapshot) {
               final enabled = snapshot.data ?? false;

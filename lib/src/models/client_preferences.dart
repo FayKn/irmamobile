@@ -17,10 +17,11 @@ class ClientPreferencesEvent extends Event {
 
 @JsonSerializable()
 class ClientPreferences {
-  ClientPreferences({required this.developerMode});
+  ClientPreferences({required this.developerMode, required this.experimentalFeatures});
 
   @JsonKey(name: 'DeveloperMode')
   final bool developerMode;
+  final bool experimentalFeatures;
 
   factory ClientPreferences.fromJson(Map<String, dynamic> json) => _$ClientPreferencesFromJson(json);
   Map<String, dynamic> toJson() => _$ClientPreferencesToJson(this);

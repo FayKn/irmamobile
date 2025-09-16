@@ -3,6 +3,7 @@ package irmagobridge
 import (
 	"encoding/json"
 
+	TwoFa "github.com/privacybydesign/TwoFaGo"
 	irma "github.com/privacybydesign/irmago"
 	"github.com/privacybydesign/irmago/irmaclient"
 )
@@ -235,6 +236,9 @@ type logsEvent struct {
 	LogEntries []irmaclient.LogInfo
 }
 
+type storeTOTPSecretEvent struct {
+	storedSecret TwoFa.TOTPStored
+}
 // //
 // Embedded types
 // //

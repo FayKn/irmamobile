@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/go-errors/errors"
+	TwoFa "github.com/privacybydesign/TwoFaGo"
 	irma "github.com/privacybydesign/irmago"
 	"github.com/privacybydesign/irmago/irmaclient"
 	"github.com/sirupsen/logrus"
@@ -28,6 +29,7 @@ type Signer irmaclient.Signer
 
 var bridge IrmaMobileBridge
 var client *irmaclient.Client
+var mfaClient *TwoFa.MFAClient
 var appDataVersion = "v2"
 var clientLoaded = make(chan struct{})
 var clientErr *errors.Error
@@ -157,6 +159,14 @@ func Start(givenBridge IrmaMobileBridge, appDataPath string, assetsPath string, 
 	if err != nil {
 		clientErr = errors.WrapPrefix(err, "Cannot initialize client", 0)
 		return
+	}
+
+	if client.GetPreferences().ExperimentalFeatures {
+		mfaClient, err = TwoFa.New(appVersionDataPath, aesKeyCopy)
+		if err != nil {
+			clientErr = errors.WrapPrefix(err, "Cannot initialize 2FA client", 0)
+			return
+		}
 	}
 
 	if !client.GetPreferences().DeveloperMode {

@@ -24,8 +24,9 @@ class _LoggingTabState extends State<LoggingTab> {
         backgroundColor: theme.backgroundPrimary,
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Activity', style:
-            TextStyle(
+          title: const Text(
+            'Activity',
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),

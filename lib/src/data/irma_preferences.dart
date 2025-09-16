@@ -136,9 +136,6 @@ class IrmaPreferences {
 
   Future<bool> setSerializedNotifications(String value) => _serializedNotifications.setValue(value);
 
-  Stream<bool> getExperimentalFeatures() => _enableExperiamentalFeatures;
-  Future<bool> setExperimentalFeatures(bool value) => _enableExperiamentalFeatures.setValue(value);
-
   Stream<bool> hasAcceptedLatestTerms() => _acceptedTermsUrl.map((url) => url == mostRecentTermsUrlNl);
 
   Future<bool> markLatestTermsAsAccepted(bool accepted) =>

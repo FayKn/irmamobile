@@ -148,15 +148,9 @@ class _MfaTabState extends State<MfaTab> {
   void _generateCodes() {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     for (var value in codes) {
-      value.code = generateTOTPCode(
-        value,
-        now
-      );
+      value.code = generateTOTPCode(value, now);
       value.timerProgress = now % value.period;
-      value.nextCode = generateTOTPCode(
-          value,
-          now + (value.period - value.timerProgress)
-      );
+      value.nextCode = generateTOTPCode(value, now + (value.period - value.timerProgress));
     }
   }
 
@@ -192,7 +186,8 @@ class _MfaTabState extends State<MfaTab> {
           child: Column(
               spacing: theme.defaultSpacing,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: codes.map(
+              children: codes
+                  .map(
                     (code) => TotpCard(
                       serviceName: code.issuer,
                       userName: code.userAccount,

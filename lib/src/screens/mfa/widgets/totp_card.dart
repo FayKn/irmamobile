@@ -26,10 +26,7 @@ class TotpCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
-    final double containerWidth = MediaQuery
-        .of(context)
-        .size
-        .width - theme.defaultSpacing * 2;
+    final double containerWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
 
     var stringCurrentCode = currentCode.toString().padLeft(6, '0');
     var stringNextCode = nextCode.toString().padLeft(6, '0');
