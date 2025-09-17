@@ -38,6 +38,13 @@ class _MfaTabState extends State<MfaTab> {
     super.dispose();
   }
 
+  void _AddCode() {
+    // Placeholder for adding a new MFA code
+    // In a real app, this would involve scanning a QR code or entering details manually
+    debugPrint('AddCode function called');
+    _bridge.dispatch(AddTOTPCodeEvent);
+  }
+
   void _getCodes() {
     // temporary function to simulate fetching codes
     // In a real app, this would fetch from a backend or local storage
@@ -206,6 +213,7 @@ class _MfaTabState extends State<MfaTab> {
           ),
         ),
         onPressed: () {
+          _AddCode();
           // Add your onPressed code here!
         },
         child: const Icon(Icons.add),

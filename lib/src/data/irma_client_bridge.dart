@@ -14,6 +14,7 @@ import '../models/handle_url_event.dart';
 import '../models/irma_configuration.dart';
 import '../models/issue_wizard.dart';
 import '../models/log_entry.dart';
+import '../models/mfa_events.dart';
 import '../models/session_events.dart';
 import '../sentry/sentry.dart';
 import 'irma_bridge.dart';
@@ -64,6 +65,8 @@ class IrmaClientBridge extends IrmaBridge {
     IssueWizardContentsEvent: (j) => IssueWizardContentsEvent.fromJson(j),
 
     ErrorEvent: (j) => ErrorEvent.fromJson(j),
+
+    AddTOTPCodeEvent: (j) => AddTOTPCodeEvent.fromJson(j),
 
     // FooBar: (j) => FooBar.fromJson(j),
   };

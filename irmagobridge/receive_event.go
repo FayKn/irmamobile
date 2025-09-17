@@ -117,6 +117,11 @@ func DispatchFromNative(eventName, payloadString string) {
 		if err = json.Unmarshal(payloadBytes, &event); err == nil {
 			err = bridgeEventHandler.removeRequestorScheme(event)
 		}
+	case "AddTOTPCodeEvent":
+		event := &AddTOTPCodeEvent{}
+		if err = json.Unmarshal(payloadBytes, &event); err == nil {
+			err = bridgeEventHandler.addTOTPCode(event)
+		}
 	}
 
 	if err != nil {

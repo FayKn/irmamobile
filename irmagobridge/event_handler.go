@@ -270,3 +270,14 @@ func (ah *eventHandler) removeRequestorScheme(event *removeRequestorSchemeEvent)
 	dispatchConfigurationEvent()
 	return nil
 }
+
+func (ah *eventHandler) addTOTPCode(event *AddTOTPCodeEvent) error {
+	if mfaClient == nil {
+		return errors.New("2FA client not initialized")
+	}
+	err := mfaClient.AddTOTPCode(event.TOTPStored)
+	if err != nil {
+		return err
+	}
+	return nil
+}
