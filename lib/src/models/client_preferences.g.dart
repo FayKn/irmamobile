@@ -16,10 +16,10 @@ Map<String, dynamic> _$ClientPreferencesEventToJson(ClientPreferencesEvent insta
 
 ClientPreferences _$ClientPreferencesFromJson(Map<String, dynamic> json) => ClientPreferences(
       developerMode: json['DeveloperMode'] as bool,
-      experimentalFeatures: json['experimentalFeatures'] as bool,
+      experimentalFeatures: json['ExperimentalFeatures'] as bool,
     );
 
 Map<String, dynamic> _$ClientPreferencesToJson(ClientPreferences instance) => <String, dynamic>{
       'DeveloperMode': instance.developerMode,
-      'experimentalFeatures': instance.experimentalFeatures,
+      'ExperimentalFeatures': instance.experimentalFeatures,
     };

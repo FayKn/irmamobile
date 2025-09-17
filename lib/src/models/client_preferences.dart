@@ -21,6 +21,7 @@ class ClientPreferences {
 
   @JsonKey(name: 'DeveloperMode')
   final bool developerMode;
+  @JsonKey(name: 'ExperimentalFeatures')
   final bool experimentalFeatures;
 
   factory ClientPreferences.fromJson(Map<String, dynamic> json) => _$ClientPreferencesFromJson(json);
