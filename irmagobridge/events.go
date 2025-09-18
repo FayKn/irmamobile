@@ -236,8 +236,12 @@ type logsEvent struct {
 	LogEntries []irmaclient.LogInfo
 }
 
-type AddTOTPCodeEvent struct {
+type AddTOTPSecretEvent struct {
 	TOTPStored TwoFa.TOTPStored
+}
+
+type GetAllTOTPSecretsEvent struct {
+	Codes []TwoFa.TOTPcode
 }
 
 // //

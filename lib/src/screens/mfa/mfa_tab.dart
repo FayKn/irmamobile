@@ -1,13 +1,17 @@
 // dart
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:base32/base32.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../models/mfa_credentials.dart';
+import 'package:rxdart/rxdart.dart';
 
+import '../../data/irma_repository.dart';
+import '../../data/mfa_repository.dart';
+import '../../models/mfa_credentials.dart';
+import '../../models/mfa_events.dart';
+import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../util/navigation.dart';
 import '../../widgets/irma_app_bar.dart';
@@ -22,10 +26,19 @@ class MfaTab extends StatefulWidget {
 class _MfaTabState extends State<MfaTab> {
   Timer? _ticker;
   List<MFASecret> codes = [];
+  late IrmaRepository _irmaRepo;
+  late MfaRepository _mfaRepo;
+  bool _reposInitialized = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_reposInitialized) {
+      _irmaRepo = IrmaRepositoryProvider.of(context);
+      _mfaRepo = MfaRepository(irmaRepository: _irmaRepo);
+      _reposInitialized = true;
+    }
+
     _getCodes();
     // run this once to initialize codes so we don't have a second where the codes are 000000
     _generateCodes();
@@ -39,13 +52,25 @@ class _MfaTabState extends State<MfaTab> {
   }
 
   void _AddCode() {
+    var code = TOTPStored(
+        secret: '64NAVGZ5PMPBNQCU', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
     // In a real app, this would involve scanning a QR code or entering details manually
     debugPrint('AddCode function called');
-    _bridge.dispatch(AddTOTPCodeEvent);
+    _mfaRepo.storeTOTP(code);
   }
 
-  void _getCodes() {
+  Future<void> _getCodes() async {
+    _mfaRepo.getAllTOTP();
+
+    debugPrint('Fetching codes...');
+    try {
+      await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 5));
+      debugPrint('Fetched codes: $codes');
+    } catch (e) {
+      debugPrint('Failed to fetch codes: $e');
+      return;
+    }
     // temporary function to simulate fetching codes
     // In a real app, this would fetch from a backend or local storage
     // Demo data

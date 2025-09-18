@@ -24,6 +24,7 @@ import '../models/event.dart';
 import '../models/handle_url_event.dart';
 import '../models/irma_configuration.dart';
 import '../models/issue_wizard.dart';
+
 import '../models/native_events.dart';
 import '../models/session.dart';
 import '../models/session_events.dart';

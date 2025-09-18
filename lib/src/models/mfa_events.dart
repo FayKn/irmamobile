@@ -5,14 +5,22 @@ import 'event.dart';
 part 'mfa_events.g.dart';
 
 @JsonSerializable()
-class AddTOTPCodeEvent extends Event {
-  AddTOTPCodeEvent({required this.totpStored});
+class AddTOTPSecretEvent extends Event {
+  AddTOTPSecretEvent({required this.totpStored});
 
   @JsonKey(name: 'TOTPStored')
   final TOTPStored totpStored;
 
-  factory AddTOTPCodeEvent.fromJson(Map<String, dynamic> json) => _$AddTOTPCodeEventFromJson(json);
-  Map<String, dynamic> toJson() => _$AddTOTPCodeEventToJson(this);
+  factory AddTOTPSecretEvent.fromJson(Map<String, dynamic> json) => _$AddTOTPSecretEventFromJson(json);
+  Map<String, dynamic> toJson() => _$AddTOTPSecretEventToJson(this);
+}
+
+@JsonSerializable()
+class GetAllTOTPSecretsEvent extends Event {
+  GetAllTOTPSecretsEvent();
+
+  factory GetAllTOTPSecretsEvent.fromJson(Map<String, dynamic> json) => _$GetAllTOTPSecretsEventFromJson(json);
+  Map<String, dynamic> toJson() => _$GetAllTOTPSecretsEventToJson(this);
 }
 
 @JsonSerializable()
@@ -35,4 +43,7 @@ class TOTPStored {
     required this.period,
     required this.algorithm,
   });
+
+  factory TOTPStored.fromJson(Map<String, dynamic> json) => _$TOTPStoredFromJson(json);
+  Map<String, dynamic> toJson() => _$TOTPStoredToJson(this);
 }

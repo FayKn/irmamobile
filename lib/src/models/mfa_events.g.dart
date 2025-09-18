@@ -6,13 +6,17 @@ part of 'mfa_events.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddTOTPCodeEvent _$AddTOTPCodeEventFromJson(Map<String, dynamic> json) => AddTOTPCodeEvent(
+AddTOTPSecretEvent _$AddTOTPSecretEventFromJson(Map<String, dynamic> json) => AddTOTPSecretEvent(
       totpStored: TOTPStored.fromJson(json['TOTPStored'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$AddTOTPCodeEventToJson(AddTOTPCodeEvent instance) => <String, dynamic>{
+Map<String, dynamic> _$AddTOTPSecretEventToJson(AddTOTPSecretEvent instance) => <String, dynamic>{
       'TOTPStored': instance.totpStored,
     };
+
+GetAllTOTPSecretsEvent _$GetAllTOTPSecretsEventFromJson(Map<String, dynamic> json) => GetAllTOTPSecretsEvent();
+
+Map<String, dynamic> _$GetAllTOTPSecretsEventToJson(GetAllTOTPSecretsEvent instance) => <String, dynamic>{};
 
 TOTPStored _$TOTPStoredFromJson(Map<String, dynamic> json) => TOTPStored(
       issuer: json['Issuer'] as String,
