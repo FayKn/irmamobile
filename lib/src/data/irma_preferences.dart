@@ -32,7 +32,6 @@ class IrmaPreferences {
         _showNameChangedNotification = preferences.getBool(_showNameChangedNotificationKey, defaultValue: true),
         _lastSchemeUpdate = preferences.getInt(_lastSchemeUpdateKey, defaultValue: 0),
         _serializedNotifications = preferences.getString(_serializedNotificationsKey, defaultValue: ''),
-        _enableExperiamentalFeatures = preferences.getBool(_enableExperiamentalFeaturesKey, defaultValue: false),
         _credentialOrder = preferences.getStringList(_credentialOrderKey, defaultValue: []) {
     // Remove unused IRMA -> Yivi name change notification key
     preferences.remove(_showNameChangeNotificationKey);
@@ -80,9 +79,6 @@ class IrmaPreferences {
   // Used to store all notifications
   static const String _serializedNotificationsKey = 'preference.notifications';
   final Preference<String> _serializedNotifications;
-
-  static const String _enableExperiamentalFeaturesKey = 'preference.enable_experimental_features';
-  final Preference<bool> _enableExperiamentalFeatures;
 
   static const String _acceptedTermsUrlKey = 'preference.accepted_terms_url';
   final Preference<String> _acceptedTermsUrl;
