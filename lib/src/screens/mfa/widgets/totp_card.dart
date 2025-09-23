@@ -8,10 +8,10 @@ import '../../../widgets/translated_text.dart';
 class TotpCard extends StatelessWidget {
   final String serviceName;
   final String userName;
-  final int currentCode;
+  final String currentCode;
+  final String nextCode;
   final int period;
-  final int timerProgress;
-  final int nextCode;
+  final double timerProgress;
 
   const TotpCard({
     super.key,
@@ -84,12 +84,12 @@ class TotpCard extends StatelessWidget {
                       spacing: theme.defaultSpacing,
                       children: [
                         // TODO: replace with local assets though a sub repo of simple-icons to allow offline use
-                        SvgPicture.network(
+/*                        SvgPicture.network(
                           height: 40,
                           width: 40,
                           'https://cdn.simpleicons.org/$serviceName',
                           semanticsLabel: '$serviceName Logo',
-                        ),
+                        ),*/
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

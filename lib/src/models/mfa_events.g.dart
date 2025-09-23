@@ -14,9 +14,13 @@ Map<String, dynamic> _$AddTOTPSecretEventToJson(AddTOTPSecretEvent instance) => 
       'TOTPStored': instance.totpStored,
     };
 
-GetAllTOTPSecretsEvent _$GetAllTOTPSecretsEventFromJson(Map<String, dynamic> json) => GetAllTOTPSecretsEvent();
+GetAllTOTPSecretsEvent _$GetAllTOTPSecretsEventFromJson(Map<String, dynamic> json) => GetAllTOTPSecretsEvent(
+      codes: (json['Codes'] as List<dynamic>?)?.map((e) => TOTPcode.fromJson(e as Map<String, dynamic>)).toList(),
+    );
 
-Map<String, dynamic> _$GetAllTOTPSecretsEventToJson(GetAllTOTPSecretsEvent instance) => <String, dynamic>{};
+Map<String, dynamic> _$GetAllTOTPSecretsEventToJson(GetAllTOTPSecretsEvent instance) => <String, dynamic>{
+      'Codes': instance.codes,
+    };
 
 TOTPStored _$TOTPStoredFromJson(Map<String, dynamic> json) => TOTPStored(
       issuer: json['Issuer'] as String,
@@ -32,4 +36,22 @@ Map<String, dynamic> _$TOTPStoredToJson(TOTPStored instance) => <String, dynamic
       'Secret': instance.secret,
       'Period': instance.period,
       'Algorithm': instance.algorithm,
+    };
+
+TOTPcode _$TOTPcodeFromJson(Map<String, dynamic> json) => TOTPcode(
+      issuer: json['Issuer'] as String,
+      userAccount: json['UserAccount'] as String,
+      code: json['Code'] as String,
+      nextCode: json['NextCode'] as String,
+      period: (json['Period'] as num).toInt(),
+      timerProgress: (json['TimerProgress'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$TOTPcodeToJson(TOTPcode instance) => <String, dynamic>{
+      'Issuer': instance.issuer,
+      'UserAccount': instance.userAccount,
+      'Code': instance.code,
+      'NextCode': instance.nextCode,
+      'Period': instance.period,
+      'TimerProgress': instance.timerProgress,
     };

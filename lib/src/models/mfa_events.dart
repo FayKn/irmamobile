@@ -12,14 +12,19 @@ class AddTOTPSecretEvent extends Event {
   final TOTPStored totpStored;
 
   factory AddTOTPSecretEvent.fromJson(Map<String, dynamic> json) => _$AddTOTPSecretEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$AddTOTPSecretEventToJson(this);
 }
 
 @JsonSerializable()
 class GetAllTOTPSecretsEvent extends Event {
-  GetAllTOTPSecretsEvent();
+  GetAllTOTPSecretsEvent({this.codes});
+
+  @JsonKey(name: 'Codes')
+  final List<TOTPcode>? codes;
 
   factory GetAllTOTPSecretsEvent.fromJson(Map<String, dynamic> json) => _$GetAllTOTPSecretsEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$GetAllTOTPSecretsEventToJson(this);
 }
 
@@ -46,4 +51,32 @@ class TOTPStored {
 
   factory TOTPStored.fromJson(Map<String, dynamic> json) => _$TOTPStoredFromJson(json);
   Map<String, dynamic> toJson() => _$TOTPStoredToJson(this);
+}
+
+@JsonSerializable()
+class TOTPcode {
+  @JsonKey(name: 'Issuer')
+  final String issuer;
+  @JsonKey(name: 'UserAccount')
+  final String userAccount;
+  @JsonKey(name: 'Code')
+  final String code;
+  @JsonKey(name: 'NextCode')
+  final String nextCode;
+  @JsonKey(name: 'Period')
+  final int period;
+  @JsonKey(name: 'TimerProgress')
+  final double timerProgress;
+
+  TOTPcode({
+    required this.issuer,
+    required this.userAccount,
+    required this.code,
+    required this.nextCode,
+    required this.period,
+    required this.timerProgress,
+  });
+
+  factory TOTPcode.fromJson(Map<String, dynamic> json) => _$TOTPcodeFromJson(json);
+  Map<String, dynamic> toJson() => _$TOTPcodeToJson(this);
 }

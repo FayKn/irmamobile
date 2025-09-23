@@ -25,7 +25,7 @@ class MfaTab extends StatefulWidget {
 
 class _MfaTabState extends State<MfaTab> {
   Timer? _ticker;
-  List<MFASecret> codes = [];
+  List<TOTPcode> codes = [];
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
   bool _reposInitialized = false;
@@ -40,8 +40,6 @@ class _MfaTabState extends State<MfaTab> {
     }
 
     _getCodes();
-    // run this once to initialize codes so we don't have a second where the codes are 000000
-    _generateCodes();
     _startCodeTimers();
   }
 
@@ -51,7 +49,7 @@ class _MfaTabState extends State<MfaTab> {
     super.dispose();
   }
 
-  void _AddCode() {
+  void _addCode() {
     var code = TOTPStored(
         secret: '64NAVGZ5PMPBNQCU', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
@@ -61,128 +59,31 @@ class _MfaTabState extends State<MfaTab> {
   }
 
   Future<void> _getCodes() async {
+    debugPrint('Fetching codes...');
+
+    // Dispatch request to get all TOTP secrets
     _mfaRepo.getAllTOTP();
 
-    debugPrint('Fetching codes...');
     try {
-      await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 5));
-      debugPrint('Fetched codes: $codes');
+      // Wait for the event with the codes
+      final event = await _irmaRepo.getEvents()
+          .whereType<GetAllTOTPSecretsEvent>()
+          .first
+          .timeout(Duration(seconds: 5));
+
+      debugPrint('Received TOTP event');
+
+      // Check if we have codes and update the state
+      if (event.codes != null && event.codes!.isNotEmpty) {
+        setState(() {
+          codes = event.codes!;
+        });
+        debugPrint('Fetched ${codes.length} codes');
+      } else {
+        debugPrint('No codes available');
+      }
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
-      return;
-    }
-    // temporary function to simulate fetching codes
-    // In a real app, this would fetch from a backend or local storage
-    // Demo data
-    codes = [
-      MFASecret(
-        issuer: 'Cloudflare',
-        secret: '64NAVGZ5PMPBNQCU',
-        period: 30,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'Discord',
-        secret: 'NUOLQ2UTZCA3PO6Q',
-        period: 30,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'Slack',
-        secret: 'PZELTFR5RJNVV5T6',
-        period: 30,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'Github',
-        secret: 'UKXQHODNS57YKZCO',
-        period: 30,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'OpenAI',
-        secret: 'M4QNZ5ZZAMMUCLUD',
-        period: 30,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'Cloudflare',
-        secret: 'PH37OLAT26PUHUY7',
-        period: 15,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-      MFASecret(
-        issuer: 'Cloudflare',
-        secret: 'HLPGZ4VBFWXY5SI5',
-        period: 60,
-        userAccount: 'fay@fayk.nl',
-        timerProgress: 0,
-        code: null,
-        nextCode: null,
-      ),
-    ];
-  }
-
-  int generateTOTPCode(MFASecret secret, int currentTime) {
-    var currenTimeBytes = _intToBytes(currentTime ~/ secret.period);
-    var decodedSecret = base32.decode(secret.secret);
-
-    Hmac hmac;
-    switch (secret.algorithm) {
-      case 'SHA256':
-        hmac = Hmac(sha256, decodedSecret); // HMAC-SHA256
-      case 'SHA512':
-        hmac = Hmac(sha512, decodedSecret); // HMAC-SHA512
-      default:
-        hmac = Hmac(sha1, decodedSecret); // HMAC-SHA1
-    }
-
-    var hash = hmac.convert(currenTimeBytes).bytes;
-
-    int offset = hash[hash.length - 1] & 0xf;
-
-    int binary = ((hash[offset] & 0x7f) << 24) |
-        ((hash[offset + 1] & 0xff) << 16) |
-        ((hash[offset + 2] & 0xff) << 8) |
-        (hash[offset + 3] & 0xff);
-
-    return binary % 1000000;
-  }
-
-  static List<int> _intToBytes(int value) {
-    final byteArray = List<int>.filled(8, 0);
-    for (var index = byteArray.length - 1; index >= 0; index--) {
-      final byte = value & 0xff;
-      byteArray[index] = byte;
-      value = value >> 8;
-    }
-    return byteArray;
-  }
-
-  void _generateCodes() {
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    for (var value in codes) {
-      value.code = generateTOTPCode(value, now);
-      value.timerProgress = now % value.period;
-      value.nextCode = generateTOTPCode(value, now + (value.period - value.timerProgress));
     }
   }
 
@@ -190,7 +91,7 @@ class _MfaTabState extends State<MfaTab> {
     _ticker?.cancel();
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
-        _generateCodes();
+        _getCodes();
       });
     });
   }
@@ -223,10 +124,10 @@ class _MfaTabState extends State<MfaTab> {
                     (code) => TotpCard(
                       serviceName: code.issuer,
                       userName: code.userAccount,
-                      currentCode: code.code ?? 0,
+                      currentCode: code.code,
+                      nextCode: code.nextCode,
                       period: code.period,
                       timerProgress: code.timerProgress,
-                      nextCode: code.nextCode ?? 0,
                     ),
                   )
                   .toList())),
@@ -238,7 +139,7 @@ class _MfaTabState extends State<MfaTab> {
           ),
         ),
         onPressed: () {
-          _AddCode();
+          _addCode();
           // Add your onPressed code here!
         },
         child: const Icon(Icons.add),
