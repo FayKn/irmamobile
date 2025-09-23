@@ -1,8 +1,6 @@
 // dart
 import 'dart:async';
 
-import 'package:base32/base32.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -54,13 +52,10 @@ class _MfaTabState extends State<MfaTab> {
         secret: '64NAVGZ5PMPBNQCU', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
     // In a real app, this would involve scanning a QR code or entering details manually
-    debugPrint('AddCode function called');
     _mfaRepo.storeTOTP(code);
   }
 
   Future<void> _getCodes() async {
-    debugPrint('Fetching codes...');
-
     // Dispatch request to get all TOTP secrets
     _mfaRepo.getAllTOTP();
 
@@ -71,16 +66,11 @@ class _MfaTabState extends State<MfaTab> {
           .first
           .timeout(Duration(seconds: 5));
 
-      debugPrint('Received TOTP event');
-
       // Check if we have codes and update the state
       if (event.codes != null && event.codes!.isNotEmpty) {
         setState(() {
           codes = event.codes!;
         });
-        debugPrint('Fetched ${codes.length} codes');
-      } else {
-        debugPrint('No codes available');
       }
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
