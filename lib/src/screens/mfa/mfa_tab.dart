@@ -61,17 +61,8 @@ class _MfaTabState extends State<MfaTab> {
 
     try {
       // Wait for the event with the codes
-      final event = await _irmaRepo.getEvents()
-          .whereType<GetAllTOTPSecretsEvent>()
-          .first
-          .timeout(Duration(seconds: 5));
-
-      // Check if we have codes and update the state
-      if (event.codes != null && event.codes!.isNotEmpty) {
-        setState(() {
-          codes = event.codes!;
-        });
-      }
+      final event = await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 5));
+      codes = event.codes!;
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
     }
