@@ -244,10 +244,6 @@ type GetAllTOTPSecretsEvent struct {
 	Codes []TwoFa.TOTPcode
 }
 
-type RemoveTOTPSecretEvent struct {
-	Code TwoFa.TOTPcode
-}
-
 // //
 // Embedded types
 // //

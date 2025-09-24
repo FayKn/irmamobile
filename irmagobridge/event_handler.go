@@ -295,16 +295,3 @@ func (ah *eventHandler) getAllTOTPCodes() error {
 	})
 	return nil
 }
-
-func (ah *eventHandler) RemoveTOTPSecretByCode(event *RemoveTOTPSecretEvent) error {
-	if mfaClient == nil {
-		return errors.New("2FA client not initialized")
-	}
-
-	err := mfaClient.RemoveTOTPSecretByCode(event.Code)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}

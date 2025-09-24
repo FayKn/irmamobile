@@ -6,7 +6,6 @@ toolchain go1.24.3
 
 require (
 	github.com/go-errors/errors v1.4.2
-	github.com/privacybydesign/TwoFaGo v0.0.0-00010101000000-000000000000
 	github.com/privacybydesign/gabi v0.0.0-20221212095008-68a086907750
 	github.com/privacybydesign/irmago v0.18.2-0.20250915115650-8cf08c9ddf3a
 	github.com/sirupsen/logrus v1.9.0
@@ -73,7 +72,7 @@ require (
 	github.com/valyala/fastjson v1.6.4 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	go.etcd.io/bbolt v1.4.3 // indirect
+	go.etcd.io/bbolt v1.3.6 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/crypto v0.40.0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
@@ -88,7 +87,3 @@ require (
 	gorm.io/driver/sqlserver v1.5.2 // indirect
 	gorm.io/gorm v1.25.5 // indirect
 )
-
-replace github.com/privacybydesign/irmago => C:\Users\fay\Documents\GitHub\irmago
-
-replace github.com/privacybydesign/TwoFaGo => C:\Users\fay\Documents\GitHub\TwoFaGo

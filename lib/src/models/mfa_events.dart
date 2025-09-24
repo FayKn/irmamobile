@@ -29,17 +29,6 @@ class GetAllTOTPSecretsEvent extends Event {
 }
 
 @JsonSerializable()
-class RemoveTOTPSecretEvent extends Event {
-  RemoveTOTPSecretEvent({required this.code});
-
-  @JsonKey(name: 'Code')
-  final TOTPcode code;
-
-  factory RemoveTOTPSecretEvent.fromJson(Map<String, dynamic> json) => _$RemoveTOTPSecretEventFromJson(json);
-  Map<String, dynamic> toJson() => _$RemoveTOTPSecretEventToJson(this);
-}
-
-@JsonSerializable()
 class TOTPStored {
   @JsonKey(name: 'Issuer')
   final String issuer;
@@ -77,7 +66,7 @@ class TOTPcode {
   @JsonKey(name: 'Period')
   final int period;
   @JsonKey(name: 'TimerProgress')
-  final int timerProgress;
+  final double timerProgress;
 
   TOTPcode({
     required this.issuer,

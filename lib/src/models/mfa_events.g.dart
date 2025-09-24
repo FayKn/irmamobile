@@ -22,14 +22,6 @@ Map<String, dynamic> _$GetAllTOTPSecretsEventToJson(GetAllTOTPSecretsEvent insta
       'Codes': instance.codes,
     };
 
-RemoveTOTPSecretEvent _$RemoveTOTPSecretEventFromJson(Map<String, dynamic> json) => RemoveTOTPSecretEvent(
-      code: TOTPcode.fromJson(json['Code'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$RemoveTOTPSecretEventToJson(RemoveTOTPSecretEvent instance) => <String, dynamic>{
-      'Code': instance.code,
-    };
-
 TOTPStored _$TOTPStoredFromJson(Map<String, dynamic> json) => TOTPStored(
       issuer: json['Issuer'] as String,
       userAccount: json['UserAccount'] as String,
@@ -52,7 +44,7 @@ TOTPcode _$TOTPcodeFromJson(Map<String, dynamic> json) => TOTPcode(
       code: json['Code'] as String,
       nextCode: json['NextCode'] as String,
       period: (json['Period'] as num).toInt(),
-      timerProgress: (json['TimerProgress'] as num).toInt(),
+      timerProgress: (json['TimerProgress'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$TOTPcodeToJson(TOTPcode instance) => <String, dynamic>{

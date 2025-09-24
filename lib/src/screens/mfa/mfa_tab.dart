@@ -1,6 +1,5 @@
 // dart
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +28,6 @@ class _MfaTabState extends State<MfaTab> {
   late MfaRepository _mfaRepo;
   bool _reposInitialized = false;
 
-  // add ability to pause the timer when there are no codes to decrease unnecessary updates
-  bool timerPaused = false;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -53,31 +49,10 @@ class _MfaTabState extends State<MfaTab> {
 
   void _addCode() {
     var code = TOTPStored(
-        secret: 'WL5RMI2PVYKEIQQN', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
+        secret: '64NAVGZ5PMPBNQCU', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
     // In a real app, this would involve scanning a QR code or entering details manually
     _mfaRepo.storeTOTP(code);
-
-    timerPaused = false;
-    _getCodes();
-    _startCodeTimers();
-  }
-
-  void _removeCode(TOTPcode code) {
-    // clone code to get around immutability and pass the same instance but with timerProgress as an int
-    code = TOTPcode(
-        issuer: code.issuer,
-        userAccount: code.userAccount,
-        code: code.code,
-        nextCode: code.nextCode,
-        period: code.period,
-        timerProgress: code.timerProgress);
-    // Remove the code from the list and update the state
-
-    _mfaRepo.removeTOTP(code);
-    setState(() {
-      codes.remove(code);
-    });
   }
 
   Future<void> _getCodes() async {
@@ -87,11 +62,7 @@ class _MfaTabState extends State<MfaTab> {
     try {
       // Wait for the event with the codes
       final event = await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 5));
-      if (event.codes == null) {
-        timerPaused = true;
-        _startCodeTimers();
-      }
-      codes = event.codes ?? [];
+      codes = event.codes!;
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
     }
@@ -99,8 +70,6 @@ class _MfaTabState extends State<MfaTab> {
 
   void _startCodeTimers() {
     _ticker?.cancel();
-    if (timerPaused) return;
-
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         _getCodes();
@@ -134,13 +103,13 @@ class _MfaTabState extends State<MfaTab> {
               children: codes
                   .map(
                     (code) => TotpCard(
-                        serviceName: code.issuer,
-                        userName: code.userAccount,
-                        currentCode: code.code,
-                        nextCode: code.nextCode,
-                        period: code.period,
-                        timerProgress: code.timerProgress,
-                        onDelete: () => _removeCode(code)),
+                      serviceName: code.issuer,
+                      userName: code.userAccount,
+                      currentCode: code.code,
+                      nextCode: code.nextCode,
+                      period: code.period,
+                      timerProgress: code.timerProgress,
+                    ),
                   )
                   .toList())),
       floatingActionButton: FloatingActionButton(

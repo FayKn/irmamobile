@@ -15,8 +15,4 @@ class MfaRepository {
   void getAllTOTP() {
     irmaRepository.bridgedDispatch(GetAllTOTPSecretsEvent());
   }
-
-  void removeTOTP(TOTPcode code) {
-    irmaRepository.bridgedDispatch(RemoveTOTPSecretEvent(code: code));
-  }
 }

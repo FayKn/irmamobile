@@ -11,8 +11,7 @@ class TotpCard extends StatelessWidget {
   final String currentCode;
   final String nextCode;
   final int period;
-  final int timerProgress;
-  final void Function() onDelete;
+  final double timerProgress;
 
   const TotpCard({
     super.key,
@@ -22,7 +21,6 @@ class TotpCard extends StatelessWidget {
     required this.period,
     required this.timerProgress,
     required this.nextCode,
-    required this.onDelete,
   });
 
   @override
@@ -44,11 +42,6 @@ class TotpCard extends StatelessWidget {
         Clipboard.setData(
           ClipboardData(text: stringCurrentCode),
         );
-      },
-      onPanUpdate: (details) {
-        if (details.delta.dx < -10) {
-          onDelete();
-        }
       },
       child: Container(
         decoration: BoxDecoration(
