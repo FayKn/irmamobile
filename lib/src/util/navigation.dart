@@ -129,6 +129,10 @@ extension RoutingHelpers on BuildContext {
     final uri = Uri(path: '/issue_wizard', queryParameters: params.toQueryParams());
     await push(uri.toString());
   }
+
+  void goMFAScreen() {
+    go('/home/mfa');
+  }
 }
 
 // =============================================================================================

@@ -8,7 +8,6 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
-import '../../models/mfa_credentials.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';

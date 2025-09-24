@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../data/irma_repository.dart';
+import '../models/mfa_events.dart';
 import 'translated_value.dart';
 
 part 'session.g.dart';
@@ -36,6 +38,29 @@ abstract class Pointer {
         u: content,
         irmaqr: 'disclosing',
         protocol: 'openid4vp',
+      );
+    }
+
+    if (content.startsWith('otpauth://totp')) {
+      final uri = Uri.parse(content);
+      final secret = uri.queryParameters['secret'];
+      final algorithm = uri.queryParameters['algorithm'] ?? 'SHA1';
+      final digits = uri.queryParameters['digits'] ?? '6';
+      final period = uri.queryParameters['period'] ?? '30';
+      var issuer = uri.queryParameters['issuer'] ?? '';
+
+      final label = uri.pathSegments.isNotEmpty ? uri.pathSegments[0] : '';
+
+      if (secret == null || secret.isEmpty) {
+        throw MissingPointer(details: 'expected "secret" to be present in query parameters, but it wasn\'t');
+      }
+      return MFAPointer(
+        secret: secret,
+        issuer: issuer,
+        algorithm: algorithm,
+        digits: int.tryParse(digits) ?? 6,
+        period: int.tryParse(period) ?? 30,
+        label: label,
       );
     }
 
@@ -94,6 +119,7 @@ class IssueWizardPointer implements Pointer {
   IssueWizardPointer(this.wizard);
 
   factory IssueWizardPointer.fromJson(Map<String, dynamic> json) => _$IssueWizardPointerFromJson(json);
+
   Map<String, dynamic> toJson() => _$IssueWizardPointerToJson(this);
 
   @override
@@ -157,10 +183,38 @@ class SessionPointer implements Pointer {
   });
 
   factory SessionPointer.fromJson(Map<String, dynamic> json) => _$SessionPointerFromJson(json);
+
   Map<String, dynamic> toJson() => _$SessionPointerToJson(this);
 
   @override
   Future<void> validate({required IrmaRepository irmaRepository, RequestorInfo? requestor}) async {}
+}
+
+@JsonSerializable()
+class MFAPointer implements Pointer {
+  final String secret;
+  String issuer;
+  final String algorithm;
+  final int digits;
+  final int period;
+  final String label;
+
+  MFAPointer({
+    required this.secret,
+    required this.issuer,
+    required this.algorithm,
+    required this.digits,
+    required this.period,
+    required this.label,
+  });
+
+  @override
+  Future<void> validate({required IrmaRepository irmaRepository, RequestorInfo? requestor}) async {
+    final experimentalFeatures = await irmaRepository.getExperimentalFeatures().first;
+    if (!experimentalFeatures) {
+      throw UnsupportedError('cannot add MFA credentials: experimental features not enabled');
+    }
+  }
 }
 
 /// A pointer that refers to an issue wizard being followed by an IRMA session.
@@ -243,6 +297,7 @@ class SessionError {
   bool get reportable => !['https', 'notSupported'].contains(errorType);
 
   factory SessionError.fromJson(Map<String, dynamic> json) => _$SessionErrorFromJson(json);
+
   Map<String, dynamic> toJson() => _$SessionErrorToJson(this);
 
   @override
@@ -282,6 +337,7 @@ class RemoteError {
       );
 
   factory RemoteError.fromJson(Map<String, dynamic> json) => _$RemoteErrorFromJson(json);
+
   Map<String, dynamic> toJson() => _$RemoteErrorToJson(this);
 
   @override
@@ -320,6 +376,8 @@ class RequestorInfo {
     this.logo,
     this.logoPath,
   });
+
   factory RequestorInfo.fromJson(Map<String, dynamic> json) => _$RequestorInfoFromJson(json);
+
   Map<String, dynamic> toJson() => _$RequestorInfoToJson(this);
 }

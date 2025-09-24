@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../data/mfa_repository.dart';
 import '../models/issue_wizard.dart';
+import '../models/mfa_events.dart';
 import '../models/session.dart';
 import '../models/session_events.dart';
 import '../providers/irma_repository_provider.dart';
@@ -33,6 +35,10 @@ Future<void> handlePointer(BuildContext context, Pointer pointer, {bool pushRepl
 
   if (pointer is IssueWizardPointer && context.mounted) {
     await _startIssueWizard(context, pointer, sessionID, pushReplacement);
+  }
+
+  if (pointer is MFAPointer && context.mounted) {
+    _saveMFAndNavigate(context, pointer, pushReplacement);
   }
 }
 
@@ -98,4 +104,33 @@ Future<int> _startSessionAndNavigate(
   }
 
   return event.sessionID;
+}
+
+_saveMFAndNavigate(BuildContext context, MFAPointer mfaPointer, bool pushReplacement) async {
+  var irmaRepo = IrmaRepositoryProvider.of(context);
+  var mfaRepo = MfaRepository(irmaRepository: irmaRepo);
+
+  // The account is the part of the label after the colon, if any (e.g. 'Issuer:Account' -> 'Account')
+  var account = mfaPointer.label;
+  if (mfaPointer.label.contains(':')) {
+    account = mfaPointer.label.split(':')[1];
+    if (mfaPointer.issuer.isEmpty) {
+      // The issuer is the part of the label before the colon, if any (e.g. 'Issuer:Account' -> 'Issuer')
+      // If no issuer is provided, we take it from the label
+      mfaPointer.issuer = mfaPointer.label.split(':')[0];
+    }
+  }
+
+  var code = TOTPStored(
+      secret: mfaPointer.secret,
+      issuer: mfaPointer.issuer,
+      userAccount: account,
+      period: mfaPointer.period,
+      algorithm: mfaPointer.algorithm);
+  // Store the new MFA code
+  mfaRepo.storeTOTP(code);
+  if (!context.mounted) {
+    return;
+  }
+  context.goMFAScreen();
 }
