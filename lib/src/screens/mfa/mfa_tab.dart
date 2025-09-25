@@ -12,6 +12,7 @@ import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../util/navigation.dart';
+import '../../util/simple_icon_utils.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_icon_button.dart';
 import 'widgets/totp_card.dart';
@@ -32,6 +33,12 @@ class _MfaTabState extends State<MfaTab> {
   bool timerPaused = false;
 
   @override
+  void initState() {
+    super.initState();
+    SimpleIconsUtils().init();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_reposInitialized) {
@@ -39,7 +46,6 @@ class _MfaTabState extends State<MfaTab> {
       _mfaRepo = MfaRepository(irmaRepository: _irmaRepo);
       _reposInitialized = true;
     }
-
     _getCodes();
     _startCodeTimers();
   }
@@ -52,11 +58,10 @@ class _MfaTabState extends State<MfaTab> {
 
   void _addCode() {
     var code = TOTPStored(
-        secret: 'WL5RMI2PVYKEIQQN', issuer: 'NewService', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
+        secret: 'WL5RMI2PVYKEIQQNQ', issuer: 'Discord', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
     // In a real app, this would involve scanning a QR code or entering details manually
     _mfaRepo.storeTOTP(code);
-
     timerPaused = false;
     _getCodes();
     _startCodeTimers();
@@ -85,12 +90,14 @@ class _MfaTabState extends State<MfaTab> {
 
     try {
       // Wait for the event with the codes
-      final event = await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 5));
+      final event = await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 1));
       if (event.codes == null) {
         timerPaused = true;
         _startCodeTimers();
       }
-      codes = event.codes ?? [];
+      setState(() {
+        codes = event.codes ?? [];
+      });
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
     }
@@ -101,9 +108,7 @@ class _MfaTabState extends State<MfaTab> {
     if (timerPaused) return;
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        _getCodes();
-      });
+      _getCodes();
     });
   }
 

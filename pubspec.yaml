@@ -104,6 +104,8 @@ flutter:
     - assets/disclosure/
     - assets/ui/
     - assets/success/
+    - assets/simple-icons/icons/
+    - assets/simple-icons/data/
 
   fonts:
     - family: Alexandria

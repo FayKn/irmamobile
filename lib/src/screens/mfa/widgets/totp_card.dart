@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../theme/theme.dart';
 import '../../../widgets/translated_text.dart';
+import 'simple_icons.dart';
 
 class TotpCard extends StatelessWidget {
   final String serviceName;
@@ -90,13 +91,7 @@ class TotpCard extends StatelessWidget {
                     Row(
                       spacing: theme.defaultSpacing,
                       children: [
-                        // TODO: replace with local assets though a sub repo of simple-icons to allow offline use
-/*                        SvgPicture.network(
-                          height: 40,
-                          width: 40,
-                          'https://cdn.simpleicons.org/$serviceName',
-                          semanticsLabel: '$serviceName Logo',
-                        ),*/
+                        SimpleIcon(iconName: serviceName),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
