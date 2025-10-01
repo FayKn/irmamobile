@@ -82,6 +82,8 @@ attaching data to signed statements. These data can be relevant properties, such
 
 * Create the irmagobridge: `./bind_go.sh`.
 
+* Generate the icons for the 2fa part of the app: `format-icons.sh` or `format-icons.ps1` on Windows.
+
 * Start an emulator or connect a device via USB and run the flutter project: `flutter run` (iOS) or
   `flutter run --flavor alpha` (Android). You can also use Android Studio or Visual Studio Code for this step.
   The alpha flavor on Android does not open universal links. If you need to test these, you need to build

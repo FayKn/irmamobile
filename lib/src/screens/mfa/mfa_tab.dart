@@ -33,12 +33,6 @@ class _MfaTabState extends State<MfaTab> {
   bool timerPaused = false;
 
   @override
-  void initState() {
-    super.initState();
-    SimpleIconsUtils().init();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_reposInitialized) {
