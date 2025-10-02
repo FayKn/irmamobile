@@ -48,7 +48,6 @@ abstract class Pointer {
         throw MissingPointer(details: 'expected "secret" to be present in query parameters, but it wasn\'t');
       }
       return MFAPointer(
-        secret: secret,
         inputUrl: content,
       );
     }
