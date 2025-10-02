@@ -240,6 +240,10 @@ type AddTOTPSecretEvent struct {
 	TOTPStored TwoFa.TOTPStored
 }
 
+type StoreTOTPSecretByURLEvent struct {
+	InputURL string
+}
+
 type GetAllTOTPSecretsEvent struct {
 	Codes []TwoFa.TOTPcode
 }

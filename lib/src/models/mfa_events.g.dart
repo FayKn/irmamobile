@@ -14,6 +14,14 @@ Map<String, dynamic> _$AddTOTPSecretEventToJson(AddTOTPSecretEvent instance) => 
       'TOTPStored': instance.totpStored,
     };
 
+StoreTOTPSecretByURLEvent _$StoreTOTPSecretByURLEventFromJson(Map<String, dynamic> json) => StoreTOTPSecretByURLEvent(
+      inputUrl: json['inputUrl'] as String,
+    );
+
+Map<String, dynamic> _$StoreTOTPSecretByURLEventToJson(StoreTOTPSecretByURLEvent instance) => <String, dynamic>{
+      'inputUrl': instance.inputUrl,
+    };
+
 GetAllTOTPSecretsEvent _$GetAllTOTPSecretsEventFromJson(Map<String, dynamic> json) => GetAllTOTPSecretsEvent(
       codes: (json['Codes'] as List<dynamic>?)?.map((e) => TOTPcode.fromJson(e as Map<String, dynamic>)).toList(),
     );

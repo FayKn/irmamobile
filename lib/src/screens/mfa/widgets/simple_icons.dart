@@ -18,7 +18,7 @@ class _SimpleIconState extends State<SimpleIcon> {
   @override
   Widget build(BuildContext context) {
     String? colorHex = SimpleIconsUtils().getIconHexColor(widget.iconName);
-    if (colorHex== '000000') {
+    if (colorHex == '000000') {
       // default to transparent
       colorHex = 'FFFFFF';
     }

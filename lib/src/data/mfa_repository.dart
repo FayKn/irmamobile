@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../models/mfa_events.dart';
 import 'irma_repository.dart';
 
@@ -10,6 +8,10 @@ class MfaRepository {
 
   void storeTOTP(TOTPStored code) {
     irmaRepository.bridgedDispatch(AddTOTPSecretEvent(totpStored: code));
+  }
+
+  void storeTOTPByURL(String url) {
+    irmaRepository.bridgedDispatch(StoreTOTPSecretByURLEvent(inputUrl: url));
   }
 
   void getAllTOTP() {

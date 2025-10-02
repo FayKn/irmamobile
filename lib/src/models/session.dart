@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../data/irma_repository.dart';
-import '../models/mfa_events.dart';
 import 'translated_value.dart';
 
 part 'session.g.dart';
@@ -41,26 +40,16 @@ abstract class Pointer {
       );
     }
 
-    if (content.startsWith('otpauth://totp')) {
+    if (content.startsWith('otpauth://totp') || content.startsWith('otpauth-migration://')) {
       final uri = Uri.parse(content);
       final secret = uri.queryParameters['secret'];
-      final algorithm = uri.queryParameters['algorithm'] ?? 'SHA1';
-      final digits = uri.queryParameters['digits'] ?? '6';
-      final period = uri.queryParameters['period'] ?? '30';
-      var issuer = uri.queryParameters['issuer'] ?? '';
 
-      final label = uri.pathSegments.isNotEmpty ? uri.pathSegments[0] : '';
-
-      if (secret == null || secret.isEmpty) {
+      if ((secret == null || secret.isEmpty) && !content.startsWith('otpauth-migration://')) {
         throw MissingPointer(details: 'expected "secret" to be present in query parameters, but it wasn\'t');
       }
       return MFAPointer(
         secret: secret,
-        issuer: issuer,
-        algorithm: algorithm,
-        digits: int.tryParse(digits) ?? 6,
-        period: int.tryParse(period) ?? 30,
-        label: label,
+        inputUrl: content,
       );
     }
 
@@ -190,22 +179,11 @@ class SessionPointer implements Pointer {
   Future<void> validate({required IrmaRepository irmaRepository, RequestorInfo? requestor}) async {}
 }
 
-@JsonSerializable()
 class MFAPointer implements Pointer {
-  final String secret;
-  String issuer;
-  final String algorithm;
-  final int digits;
-  final int period;
-  final String label;
+  final String inputUrl;
 
   MFAPointer({
-    required this.secret,
-    required this.issuer,
-    required this.algorithm,
-    required this.digits,
-    required this.period,
-    required this.label,
+    required this.inputUrl,
   });
 
   @override

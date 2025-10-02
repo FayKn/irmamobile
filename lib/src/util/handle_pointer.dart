@@ -110,25 +110,8 @@ _saveMFAndNavigate(BuildContext context, MFAPointer mfaPointer, bool pushReplace
   var irmaRepo = IrmaRepositoryProvider.of(context);
   var mfaRepo = MfaRepository(irmaRepository: irmaRepo);
 
-  // The account is the part of the label after the colon, if any (e.g. 'Issuer:Account' -> 'Account')
-  var account = mfaPointer.label;
-  if (mfaPointer.label.contains(':')) {
-    account = mfaPointer.label.split(':')[1];
-    if (mfaPointer.issuer.isEmpty) {
-      // The issuer is the part of the label before the colon, if any (e.g. 'Issuer:Account' -> 'Issuer')
-      // If no issuer is provided, we take it from the label
-      mfaPointer.issuer = mfaPointer.label.split(':')[0];
-    }
-  }
-
-  var code = TOTPStored(
-      secret: mfaPointer.secret,
-      issuer: mfaPointer.issuer,
-      userAccount: account,
-      period: mfaPointer.period,
-      algorithm: mfaPointer.algorithm);
   // Store the new MFA code
-  mfaRepo.storeTOTP(code);
+  mfaRepo.storeTOTPByURL(mfaPointer.inputUrl);
   if (!context.mounted) {
     return;
   }

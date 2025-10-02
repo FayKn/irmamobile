@@ -55,14 +55,14 @@ class HomeScreen extends StatelessWidget {
                 right: false,
                 top: false,
                 child: Scaffold(
-              body: switch (tabState) {
-                IrmaNavBarTab.data => DataTab(),
-                IrmaNavBarTab.notifications => NotificationsTab(),
-                IrmaNavBarTab.activity => ActivityTab(),
-                IrmaNavBarTab.mfa => MfaTab(),
-                IrmaNavBarTab.logging => LoggingTab(),
-                IrmaNavBarTab.more => MoreTab(onChangeTab: changeTab),
-              },
+                  body: switch (tabState) {
+                    IrmaNavBarTab.data => DataTab(),
+                    IrmaNavBarTab.notifications => NotificationsTab(),
+                    IrmaNavBarTab.activity => ActivityTab(),
+                    IrmaNavBarTab.mfa => MfaTab(),
+                    IrmaNavBarTab.logging => LoggingTab(),
+                    IrmaNavBarTab.more => MoreTab(onChangeTab: changeTab),
+                  },
                   floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
                   resizeToAvoidBottomInset: false,
                   floatingActionButton: Padding(

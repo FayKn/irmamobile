@@ -282,6 +282,17 @@ func (ah *eventHandler) addTOTPCode(event *AddTOTPSecretEvent) error {
 	return nil
 }
 
+func (ah *eventHandler) addTOTPCodeByURL(event *StoreTOTPSecretByURLEvent) error {
+	if mfaClient == nil {
+		return errors.New("2FA client not initialized")
+	}
+	err := mfaClient.StoreTOTPSecretByURL(event.InputURL)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ah *eventHandler) getAllTOTPCodes() error {
 	if mfaClient == nil {
 		return errors.New("2FA client not initialized")

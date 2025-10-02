@@ -122,6 +122,11 @@ func DispatchFromNative(eventName, payloadString string) {
 		if err = json.Unmarshal(payloadBytes, &event); err == nil {
 			err = bridgeEventHandler.addTOTPCode(event)
 		}
+	case "StoreTOTPSecretByURLEvent":
+		event := &StoreTOTPSecretByURLEvent{}
+		if err = json.Unmarshal(payloadBytes, &event); err == nil {
+			err = bridgeEventHandler.addTOTPCodeByURL(event)
+		}
 	case "GetAllTOTPSecretsEvent":
 		event := &GetAllTOTPSecretsEvent{}
 		if err = json.Unmarshal(payloadBytes, &event); err == nil {

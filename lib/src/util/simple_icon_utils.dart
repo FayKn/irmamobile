@@ -12,8 +12,7 @@ class SimpleIconsUtils {
   SimpleIconsUtils._internal();
 
   static String getIconName(String iconName) {
-    return iconName
-        .toLowerCase();
+    return iconName.toLowerCase();
   }
 
   static String getIconAssetPath(String iconName) {
