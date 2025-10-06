@@ -133,6 +133,10 @@ extension RoutingHelpers on BuildContext {
   void goMFAScreen() {
     go('/home/mfa');
   }
+
+  void goMFAExportScreen() {
+    go('/home/mfa_export');
+  }
 }
 
 // =============================================================================================

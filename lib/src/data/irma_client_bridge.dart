@@ -68,6 +68,8 @@ class IrmaClientBridge extends IrmaBridge {
 
     AddTOTPSecretEvent: (j) => AddTOTPSecretEvent.fromJson(j),
 
+    ExportSecretsEvent: (j) => ExportSecretsEvent.fromJson(j),
+
     StoreTOTPSecretByURLEvent: (j) => StoreTOTPSecretByURLEvent.fromJson(j),
 
     GetAllTOTPSecretsEvent: (j) => GetAllTOTPSecretsEvent.fromJson(j),

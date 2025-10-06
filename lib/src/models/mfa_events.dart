@@ -17,6 +17,18 @@ class AddTOTPSecretEvent extends Event {
 }
 
 @JsonSerializable()
+class ExportSecretsEvent extends Event {
+  ExportSecretsEvent({this.totpStored});
+
+  @JsonKey(name: 'Secrets')
+  final List<TOTPStored>? totpStored;
+
+  factory ExportSecretsEvent.fromJson(Map<String, dynamic> json) => _$ExportSecretsEventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExportSecretsEventToJson(this);
+}
+
+@JsonSerializable()
 class StoreTOTPSecretByURLEvent extends Event {
   StoreTOTPSecretByURLEvent({required this.inputUrl});
 

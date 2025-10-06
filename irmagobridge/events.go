@@ -244,6 +244,10 @@ type StoreTOTPSecretByURLEvent struct {
 	InputURL string
 }
 
+type ExportSecretsEvent struct {
+	Secrets []TwoFa.TOTPStored
+}
+
 type GetAllTOTPSecretsEvent struct {
 	Codes []TwoFa.TOTPcode
 }

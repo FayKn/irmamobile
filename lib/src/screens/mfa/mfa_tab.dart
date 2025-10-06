@@ -52,7 +52,7 @@ class _MfaTabState extends State<MfaTab> {
 
   void _addCode() {
     var code = TOTPStored(
-        secret: 'WL5RMI2PVYKEIQQNQ', issuer: 'Discord', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
+        secret: 'WL5RMI2PVYKEIQQNR', issuer: 'Cloudflare', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
     // Placeholder for adding a new MFA code
     // In a real app, this would involve scanning a QR code or entering details manually
     _mfaRepo.storeTOTP(code);
@@ -140,7 +140,9 @@ class _MfaTabState extends State<MfaTab> {
                         timerProgress: code.timerProgress,
                         onDelete: () => _removeCode(code)),
                   )
-                  .toList())),
+                  .toList(),
+          ),
+      ),
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(
           side: BorderSide(

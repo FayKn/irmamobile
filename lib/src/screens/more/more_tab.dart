@@ -104,6 +104,11 @@ class _MoreTabState extends State<MoreTab> {
                     iconData: Icons.code_rounded,
                     onTap: context.goDebugScreen,
                   ),
+                InternalLinkTile(
+                  labelTranslationKey: 'more_tab.mfa_export',
+                  iconData: Icons.compare_arrows_outlined,
+                  onTap: context.goMFAExportScreen,
+                ),
               ],
             ),
             spacerWidget,

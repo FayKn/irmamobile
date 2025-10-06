@@ -442,6 +442,8 @@
     "settings": "Settings",
     "faq": "Frequently asked questions",
     "debugging": "Debugging",
+    "mfa_export": "Export 2FA codes",
+
     "contact": "Contact us",
     "share": "Share Yivi",
     "share_text": "Check out the Yivi app: https://yivi.app",

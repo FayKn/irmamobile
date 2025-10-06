@@ -10,6 +10,10 @@ class MfaRepository {
     irmaRepository.bridgedDispatch(AddTOTPSecretEvent(totpStored: code));
   }
 
+  void exportTOTP() {
+    irmaRepository.bridgedDispatch(ExportSecretsEvent());
+  }
+
   void storeTOTPByURL(String url) {
     irmaRepository.bridgedDispatch(StoreTOTPSecretByURLEvent(inputUrl: url));
   }
