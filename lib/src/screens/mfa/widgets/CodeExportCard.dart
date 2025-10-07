@@ -41,7 +41,7 @@ class _CodeExportcardState extends State<CodeExportcard> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(children: [
-                SimpleIcon(iconName: widget.code.issuer, width: 60, height: 60),
+                SimpleIcon(iconName: widget.code.issuer, width: 80, height: 80),
                 Text(
                   widget.code.issuer,
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -49,7 +49,13 @@ class _CodeExportcardState extends State<CodeExportcard> {
                     fontSize: 26,
                   ),
                 ),
-                Text(widget.code.userAccount),
+                Text(
+                  widget.code.userAccount,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 18,
+                    color: theme.neutralExtraDark,
+                  ),
+                ),
               ]),
               Spacer(flex: 1),
               GestureDetector(
@@ -60,12 +66,12 @@ class _CodeExportcardState extends State<CodeExportcard> {
                 },
                 child: ImageFiltered(
                   imageFilter:
-                  codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                      codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                   child: QrImageView(
                     errorCorrectionLevel: QrErrorCorrectLevel.L,
                     data: widget.code.url,
                     version: QrVersions.auto,
-                    size: 180,
+                    size: 150,
                   ),
                 ),
               )
