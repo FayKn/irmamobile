@@ -60,7 +60,7 @@ class _CodeExportcardState extends State<CodeExportcard> {
                 },
                 child: ImageFiltered(
                   imageFilter:
-                  codeBlurred ? ImageFilter.blur(sigmaX: 6, sigmaY: 6) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                  codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                   child: QrImageView(
                     errorCorrectionLevel: QrErrorCorrectLevel.L,
                     data: widget.code.url,

@@ -47,6 +47,8 @@ dependencies:
   flutter_riverpod: ^2.6.1
   jailbreak_root_detection: ^1.2.0+1
   qr_flutter: ^4.1.0
+  path_provider: ^2.1.5
+  file_picker: ^10.3.3
   # Temporary forks because their original repos are not compatible with new android api's.
   # Should be reverted back to their published version when they're made compatible.
   native_device_orientation:

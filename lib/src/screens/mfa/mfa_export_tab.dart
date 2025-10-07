@@ -1,16 +1,21 @@
 // dart
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
-import '../../widgets/yivi_themed_button.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
+import '../../widgets/yivi_themed_button.dart';
 import 'widgets/CodeExportCard.dart';
 
 class MfaExportTab extends StatefulWidget {
@@ -60,8 +65,8 @@ class MfaExportTabState extends State<MfaExportTab> {
   }
 
   void changeSelection(TOTPStoredWithUrl code, bool shortPress) {
+    // No selection yet, short press does nothing so to not interfere with unblurring the QR
     if (shortPress && codesSelected.isEmpty) {
-      // No selection yet, short press does nothing
       return;
     }
 
@@ -74,8 +79,72 @@ class MfaExportTabState extends State<MfaExportTab> {
     });
   }
 
-  void handleExportList() {
+  Future<void> handleExportList() async {
+    debugPrint('Exporting list of ${codesSelected.length} codes');
+
+    final buffer = generateExportContent();
+
+    final content = buffer.toString();
+
+    switch (Platform.operatingSystem) {
+      case 'android':
+        filePickerShareFile(buffer);
+      case 'ios':
+        await shareExportFile(content);
+      default:
+        await filePickerShareFile(buffer);
+    }
+
     debugPrint('Exporting ${codesSelected.length} codes');
+  }
+
+  StringBuffer generateExportContent() {
+    final buffer = StringBuffer();
+    for (var code in codesSelected) {
+      buffer.writeln('Issuer: ${code.issuer}');
+      buffer.writeln('Account: ${code.userAccount}');
+      buffer.writeln('Secret: ${code.secret}');
+      buffer.writeln('Period: ${code.period}');
+      buffer.writeln('Algorithm: ${code.algorithm}');
+      buffer.writeln(''); // Blank line between entries
+    }
+    return buffer;
+  }
+
+  Future<void> shareExportFile(String content) async {
+    final directory = await getTemporaryDirectory();
+    var currentDate = DateTime.now().toIso8601String().split('T').first;
+    final filePath = '${directory.path}/mfa_export-$currentDate.txt';
+    final file = await File(filePath).writeAsString(content);
+    if (await file.exists()) {
+      debugPrint('Prepared for sharing: $filePath');
+      final shareParams = ShareParams(
+        files: [XFile(filePath)],
+      );
+      await SharePlus.instance.share(shareParams);
+    } else {
+      debugPrint('Failed to write export file');
+    }
+  }
+
+  Future<void> filePickerShareFile(StringBuffer content) async {
+    var currentDate = DateTime.now().toIso8601String().split('T').first;
+    final suggestedName = 'mfa_export-$currentDate.txt';
+    content.write('\n');
+    final Uint8List contentBytes = Uint8List.fromList(content.toString().codeUnits);
+
+    final String? path = await FilePicker.platform.saveFile(
+      fileName: suggestedName,
+      type: FileType.custom,
+      allowedExtensions: ['txt'],
+      bytes: contentBytes,
+    );
+
+    if (path != null) {
+      debugPrint('File saved to: $path');
+    } else {
+      debugPrint('User canceled save');
+    }
   }
 
   // No separate URL list is needed: each stored entry contains its URL.
@@ -91,8 +160,8 @@ class MfaExportTabState extends State<MfaExportTab> {
       floatingActionButton: SizedBox(
         width: MediaQuery.of(context).size.width - theme.defaultSpacing * 2,
         child: YiviThemedButton(
-          label: 'Export another way',
-          onPressed: codesSelected.isNotEmpty ? () => handleExportList : null,
+          label: 'mfa.export_as_file',
+          onPressed: codesSelected.isNotEmpty ? () => handleExportList() : null,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -103,7 +172,7 @@ class MfaExportTabState extends State<MfaExportTab> {
           spacing: theme.defaultSpacing,
           children: codes
               .map(
-                (entry) => InkWell (
+                (entry) => InkWell(
                   onLongPress: () {
                     setState(() {
                       changeSelection(entry, false);

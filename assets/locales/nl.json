@@ -632,7 +632,8 @@
     "explanation": "Onder de motorkap is alles hetzelfde gebleven, je kunt gewoon inloggen met je oude PIN-code."
   },
   "mfa": {
-    "nextCode": "Volgende code: {code}"
+    "nextCode": "Volgende code: {code}",
+    "export_as_file": "Exporteer als bestand"
   },
   "notifications": {
     "title": "Notificaties",

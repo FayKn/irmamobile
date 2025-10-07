@@ -632,7 +632,8 @@
     "explanation": "Everything remained the same under the hood, you can log in with your old PIN code."
   },
   "mfa": {
-    "nextCode": "Next code: {code}"
+    "nextCode": "Next code: {code}",
+    "export_as_file": "Export as file"
   },
   "notifications": {
     "title": "Notifications",
