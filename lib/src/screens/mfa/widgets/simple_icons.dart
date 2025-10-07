@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -8,7 +10,12 @@ class SimpleIcon extends StatefulWidget {
   const SimpleIcon({
     super.key,
     required this.iconName,
+    this.width = 40.0,
+    this.height = 40.0,
   });
+
+  final double width;
+  final double height;
 
   @override
   State<SimpleIcon> createState() => _SimpleIconState();
@@ -27,12 +34,12 @@ class _SimpleIconState extends State<SimpleIcon> {
     return SvgPicture.asset(
       SimpleIconsUtils.getIconAssetPath(widget.iconName),
       semanticsLabel: '${widget.iconName} logo',
-      height: 40,
-      width: 40,
+      height: widget.height,
+      width: widget.width,
       colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
       placeholderBuilder: (BuildContext context) => Container(
-        height: 40,
-        width: 40,
+        height: widget.height,
+        width: widget.width,
         color: Colors.transparent,
       ),
     );

@@ -1,15 +1,23 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:math' as math;
 
 import '../../../theme/theme.dart';
 import '../mfa_export_tab.dart';
 import 'simple_icons.dart';
 
-class CodeExportcard extends StatelessWidget {
+class CodeExportcard extends StatefulWidget {
   final TOTPStoredWithUrl code;
 
   const CodeExportcard({super.key, required this.code});
+
+  @override
+  State<CodeExportcard> createState() => _CodeExportcardState();
+}
+
+class _CodeExportcardState extends State<CodeExportcard> {
+  bool codeBlurred = true;
 
   @override
   Widget build(BuildContext context) {
@@ -22,37 +30,43 @@ class CodeExportcard extends StatelessWidget {
       ),
       padding: EdgeInsets.all(theme.defaultSpacing),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: theme.defaultSpacing,
         children: [
-          LayoutBuilder(builder: (context, constraints) {
-            return ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-              child: Text(
-                code.issuer,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }),
-          SizedBox(height: theme.defaultSpacing / 2),
-          SimpleIcon(iconName: code.issuer),
-          SizedBox(height: theme.defaultSpacing),
-          // Make the QR responsive to the available space in the card so it
-          // doesn't overflow when the carousel forces a smaller card size.
-          LayoutBuilder(builder: (context, constraints) {
-            // choose a maximum size but respect the card's constraints
-            final maxAvailable = math.min(constraints.maxWidth, constraints.maxHeight);
-            final qrSize = math.min(200.0, maxAvailable * 0.6);
-            return QrImageView(
-              data: code.url,
-              version: QrVersions.auto,
-              size: qrSize,
-            );
-          }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(children: [
+                SimpleIcon(iconName: widget.code.issuer, width: 60, height: 60),
+                Text(
+                  widget.code.issuer,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 26,
+                  ),
+                ),
+                Text(widget.code.userAccount),
+              ]),
+              Spacer(flex: 1),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    codeBlurred = !codeBlurred;
+                  });
+                },
+                child: ImageFiltered(
+                  imageFilter:
+                      codeBlurred ? ImageFilter.blur(sigmaX: 6, sigmaY: 6) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                  child: QrImageView(
+                    errorCorrectionLevel: QrErrorCorrectLevel.L,
+                    data: widget.code.url,
+                    version: QrVersions.auto,
+                    size: 180,
+                  ),
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );

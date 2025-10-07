@@ -8,6 +8,7 @@ import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
+import '../../widgets/yivi_themed_button.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import 'widgets/CodeExportCard.dart';
@@ -25,21 +26,9 @@ class MfaExportTabState extends State<MfaExportTab> {
   // Store TOTP entries together with the generated otpauth:// URL
   List<TOTPStoredWithUrl> codes = [];
 
-  // Page controller with viewportFraction to allow partial side cards to show
-  late final PageController _pageController;
-
-  // A sensible default fraction so side cards peek in; tweak if needed.
-  static const double _defaultViewportFraction = 0.88;
-
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: _defaultViewportFraction);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
   }
 
   @override
@@ -74,32 +63,24 @@ class MfaExportTabState extends State<MfaExportTab> {
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
 
-    // Compute a fixed card size based on screen width and theme spacing.
-    final double cardWidth = MediaQuery.of(context).size.width - theme.defaultSpacing * 2;
-    // Choose a reasonable height for the card; adjust as needed.
-    final double cardHeight = MediaQuery.of(context).size.height * 0.6;
-
     return Scaffold(
       backgroundColor: IrmaTheme.of(context).backgroundTertiary,
       appBar: IrmaAppBar(
         titleTranslationKey: 'more_tab.mfa_export',
       ),
-      body: CarouselView(
-        scrollDirection: Axis.horizontal,
-        itemSnapping: true,
-        // Keep itemExtent in sync with cardWidth to help the carousel snap.
-        itemExtent: cardWidth,
-        children: codes
-            .map((entry) =>
-                // Wrap the card in a SizedBox so it has a stable width/height
-                SizedBox(
-                  width: cardWidth,
-                  height: cardHeight,
-                  child: Center(
-                    child: CodeExportcard(code: entry),
-                  ),
-                ))
-            .toList(),
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.all(theme.defaultSpacing),
+        child: Column(
+          spacing: theme.defaultSpacing,
+          children: codes
+              .map(
+                (entry) => Center(
+                  child: CodeExportcard(code: entry),
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }
