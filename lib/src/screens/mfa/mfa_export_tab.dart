@@ -25,6 +25,7 @@ class MfaExportTabState extends State<MfaExportTab> {
 
   // Store TOTP entries together with the generated otpauth:// URL
   List<TOTPStoredWithUrl> codes = [];
+  List<TOTPStoredWithUrl> codesSelected = [];
 
   @override
   void initState() {
@@ -58,6 +59,25 @@ class MfaExportTabState extends State<MfaExportTab> {
     }
   }
 
+  void changeSelection(TOTPStoredWithUrl code, bool shortPress) {
+    if (shortPress && codesSelected.isEmpty) {
+      // No selection yet, short press does nothing
+      return;
+    }
+
+    setState(() {
+      if (codesSelected.contains(code)) {
+        codesSelected.remove(code);
+      } else {
+        codesSelected.add(code);
+      }
+    });
+  }
+
+  void handleExportList() {
+    debugPrint('Exporting ${codesSelected.length} codes');
+  }
+
   // No separate URL list is needed: each stored entry contains its URL.
   @override
   Widget build(BuildContext context) {
@@ -68,6 +88,14 @@ class MfaExportTabState extends State<MfaExportTab> {
       appBar: IrmaAppBar(
         titleTranslationKey: 'more_tab.mfa_export',
       ),
+      floatingActionButton: SizedBox(
+        width: MediaQuery.of(context).size.width - theme.defaultSpacing * 2,
+        child: YiviThemedButton(
+          label: 'Export another way',
+          onPressed: codesSelected.isNotEmpty ? () => handleExportList : null,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(theme.defaultSpacing),
@@ -75,8 +103,18 @@ class MfaExportTabState extends State<MfaExportTab> {
           spacing: theme.defaultSpacing,
           children: codes
               .map(
-                (entry) => Center(
-                  child: CodeExportcard(code: entry),
+                (entry) => InkWell (
+                  onLongPress: () {
+                    setState(() {
+                      changeSelection(entry, false);
+                    });
+                  },
+                  onTap: () {
+                    setState(() {
+                      changeSelection(entry, true);
+                    });
+                  },
+                  child: CodeExportcard(code: entry, codeselected: codesSelected),
                 ),
               )
               .toList(),

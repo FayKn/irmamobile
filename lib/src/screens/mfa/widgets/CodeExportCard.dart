@@ -9,8 +9,9 @@ import 'simple_icons.dart';
 
 class CodeExportcard extends StatefulWidget {
   final TOTPStoredWithUrl code;
+  final List<TOTPStoredWithUrl>? codeselected;
 
-  const CodeExportcard({super.key, required this.code});
+  const CodeExportcard({super.key, required this.code, this.codeselected});
 
   @override
   State<CodeExportcard> createState() => _CodeExportcardState();
@@ -25,6 +26,9 @@ class _CodeExportcardState extends State<CodeExportcard> {
 
     return Container(
       decoration: BoxDecoration(
+        border: widget.codeselected != null && widget.codeselected!.contains(widget.code)
+            ? Border.all(width: 3, color: theme.primary)
+            : Border.all(width: 3, color: Colors.transparent),
         borderRadius: theme.borderRadius,
         color: theme.light,
       ),
@@ -56,7 +60,7 @@ class _CodeExportcardState extends State<CodeExportcard> {
                 },
                 child: ImageFiltered(
                   imageFilter:
-                      codeBlurred ? ImageFilter.blur(sigmaX: 6, sigmaY: 6) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                  codeBlurred ? ImageFilter.blur(sigmaX: 6, sigmaY: 6) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                   child: QrImageView(
                     errorCorrectionLevel: QrErrorCorrectLevel.L,
                     data: widget.code.url,
