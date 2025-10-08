@@ -11,16 +11,24 @@ import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
+import 'mfa_export_tab.dart';
 
 class MfaExportGauthTab extends StatefulWidget {
   @override
   State<MfaExportGauthTab> createState() => MfaExportGauthTabState();
+  final List<TOTPStoredWithUrl> codesSelected;
+
+  const MfaExportGauthTab({
+    super.key,
+    required this.codesSelected,
+  });
 }
 
 class MfaExportGauthTabState extends State<MfaExportGauthTab> {
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
   bool _reposInitialized = false;
+  String googleMigrationUrl = '';
 
   @override
   didChangeDependencies() {
@@ -35,14 +43,27 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
   }
 
   Future<void> _getGoogleTOTPURL() async {
-    // mfaRepo.exportTOTPToURL();
+    // build list of TOTPStored from selected entries by removing the URL
+    final List<TOTPStored> codesSelected = widget.codesSelected
+        .map((e) => TOTPStored(
+      issuer: e.issuer,
+      userAccount: e.userAccount,
+      secret: e.secret,
+      period: e.period,
+      algorithm: e.algorithm,
+    ))
+        .toList();
+
+
+    _mfaRepo.exportTOTPToURL(codesSelected, isGoogle: true);
 
     try {
       // Wait for the event with the codes
       final event =
-          await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
+      await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
       setState(() {
         debugPrint('Received URLs: ${event.urls}');
+        googleMigrationUrl = (event.urls!.isNotEmpty ? event.urls?.first : '')!;
         // Handle the received URLs or data here
         // For example, you might want to store them in a list
       });
@@ -69,9 +90,10 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
           children: [
             QrImageView(
               errorCorrectionLevel: QrErrorCorrectLevel.L,
-              data: 'tets.com',
+              data: googleMigrationUrl,
               version: QrVersions.auto,
-              size: 150,
+              size: MediaQuery.of(context).size.width * 0.9,
+              backgroundColor: Colors.white,
             ),
           ],
         ),

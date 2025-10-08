@@ -16,6 +16,7 @@ import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
+import 'mfa_export_gauth_tab.dart';
 import 'widgets/CodeExportCard.dart';
 
 class MfaExportTab extends StatefulWidget {
@@ -41,35 +42,6 @@ class MfaExportTabState extends State<MfaExportTab> {
       _reposInitialized = true;
 
       _getSecrets();
-    }
-  }
-
-  Future<void> _getGoogleTOTPURL() async {
-    // build list of TOTPStored from selected entries by removing the URL
-    final List<TOTPStored> codesSelected = this.codesSelected
-        .map((e) => TOTPStored(
-              issuer: e.issuer,
-              userAccount: e.userAccount,
-              secret: e.secret,
-              period: e.period,
-              algorithm: e.algorithm,
-            ))
-        .toList();
-
-
-    _mfaRepo.exportTOTPToURL(codesSelected, isGoogle: true);
-
-    try {
-      // Wait for the event with the codes
-      final event =
-          await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
-      setState(() {
-        debugPrint('Received URLs: ${event.urls}');
-        // Handle the received URLs or data here
-        // For example, you might want to store them in a list
-      });
-    } catch (e) {
-      debugPrint('Failed to fetch codes: $e');
     }
   }
 
@@ -121,6 +93,16 @@ class MfaExportTabState extends State<MfaExportTab> {
 
     debugPrint('Exporting ${codesSelected.length} codes');
   }
+
+  void goToGoogleAuthCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => MfaExportGauthTab(codesSelected: codesSelected),
+      ),
+    );
+  }
+
 
   StringBuffer generatePlainExportContent() {
     final buffer = StringBuffer();
@@ -185,7 +167,7 @@ class MfaExportTabState extends State<MfaExportTab> {
         primaryButtonLabel: 'mfa.export_as_file',
         secondaryButtonLabel: 'mfa.export_as_google',
         onPrimaryPressed: codesSelected.isNotEmpty ? handleFileExportList : null,
-        onSecondaryPressed: codesSelected.isNotEmpty ? _getGoogleTOTPURL : null,
+        onSecondaryPressed: codesSelected.isNotEmpty ? goToGoogleAuthCode : null,
         alignment: IrmaBottomBarAlignment.vertical,
       ),
       body: SingleChildScrollView(

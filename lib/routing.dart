@@ -180,9 +180,7 @@ GoRouter createRouter(BuildContext buildContext) {
             builder: (context, state) => NotificationsTab(),
           ),
           GoRoute(path: 'mfa', builder: (context, state) => MfaTab()),
-          GoRoute(path: 'mfa_export', builder: (context, state) => MfaExportTab(), routes: [
-            GoRoute(path: 'google_auth', builder: (context, state) => MfaExportGauthTab()),
-          ]),
+          GoRoute(path: 'mfa_export', builder: (context, state) => MfaExportTab()),
         ],
       ),
       GoRoute(
