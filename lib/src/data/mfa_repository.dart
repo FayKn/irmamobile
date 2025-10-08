@@ -14,6 +14,10 @@ class MfaRepository {
     irmaRepository.bridgedDispatch(ExportSecretsEvent());
   }
 
+  void exportTOTPToURL(List<TOTPStored> secrets, {bool isGoogle = true}) {
+    irmaRepository.bridgedDispatch(ExportSecretsInputToUrlEvent(secrets: secrets, isGoogle: isGoogle));
+  }
+
   void storeTOTPByURL(String url) {
     irmaRepository.bridgedDispatch(StoreTOTPSecretByURLEvent(inputUrl: url));
   }

@@ -27,6 +27,7 @@ import 'src/screens/home/widgets/irma_qr_scan_button.dart';
 import 'src/screens/issue_wizard/issue_wizard.dart';
 import 'src/screens/issue_wizard/widgets/issue_wizard_success_screen.dart';
 import 'src/screens/loading/loading_screen.dart';
+import 'src/screens/mfa/mfa_export_gauth_tab.dart';
 import 'src/screens/mfa/mfa_export_tab.dart';
 import 'src/screens/mfa/mfa_tab.dart';
 import 'src/screens/name_changed/name_changed_screen.dart';
@@ -178,13 +179,10 @@ GoRouter createRouter(BuildContext buildContext) {
             path: 'notifications',
             builder: (context, state) => NotificationsTab(),
           ),
-          GoRoute(path: 'mfa',
-              builder: (context, state) => MfaTab()
-          ),
-          GoRoute(
-            path: 'mfa_export',
-            builder: (context, state) => MfaExportTab(),
-          ),
+          GoRoute(path: 'mfa', builder: (context, state) => MfaTab()),
+          GoRoute(path: 'mfa_export', builder: (context, state) => MfaExportTab(), routes: [
+            GoRoute(path: 'google_auth', builder: (context, state) => MfaExportGauthTab()),
+          ]),
         ],
       ),
       GoRoute(

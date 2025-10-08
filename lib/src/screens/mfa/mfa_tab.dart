@@ -124,24 +124,24 @@ class _MfaTabState extends State<MfaTab> {
         ],
       ),
       body: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(theme.defaultSpacing),
-          child: Column(
-              spacing: theme.defaultSpacing,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: codes
-                  .map(
-                    (code) => TotpCard(
-                        serviceName: code.issuer,
-                        userName: code.userAccount,
-                        currentCode: code.code,
-                        nextCode: code.nextCode,
-                        period: code.period,
-                        timerProgress: code.timerProgress,
-                        onDelete: () => _removeCode(code)),
-                  )
-                  .toList(),
-          ),
+        physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.all(theme.defaultSpacing),
+        child: Column(
+          spacing: theme.defaultSpacing,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: codes
+              .map(
+                (code) => TotpCard(
+                    serviceName: code.issuer,
+                    userName: code.userAccount,
+                    currentCode: code.code,
+                    nextCode: code.nextCode,
+                    period: code.period,
+                    timerProgress: code.timerProgress,
+                    onDelete: () => _removeCode(code)),
+              )
+              .toList(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(

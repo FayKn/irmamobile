@@ -248,6 +248,15 @@ type ExportSecretsEvent struct {
 	Secrets []TwoFa.TOTPStored
 }
 
+type ExportSecretsFromURLInput struct {
+	Secrets  []TwoFa.TOTPStored
+	IsGoogle bool
+}
+
+type ExportSecretsToUrlEvent struct {
+	URLs []string
+}
+
 type GetAllTOTPSecretsEvent struct {
 	Codes []TwoFa.TOTPcode
 }

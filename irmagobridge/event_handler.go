@@ -307,6 +307,22 @@ func (ah *eventHandler) exportSecrets() error {
 	return nil
 }
 
+func (ah *eventHandler) exportSecretsToUrl(event *ExportSecretsFromURLInput) error {
+	if mfaClient == nil {
+		return errors.New("2FA client not initialized")
+	}
+
+	urls, err := mfaClient.ExportSecretsToUrl(event.Secrets, event.IsGoogle)
+	if err != nil {
+		return err
+	}
+
+	dispatchEvent(&ExportSecretsToUrlEvent{
+		URLs: urls,
+	})
+	return nil
+}
+
 func (ah *eventHandler) getAllTOTPCodes() error {
 	if mfaClient == nil {
 		return errors.New("2FA client not initialized")
