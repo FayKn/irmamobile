@@ -14,7 +14,9 @@ import '../../data/mfa_repository.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
+import '../../util/simple_icon_utils.dart';
 import '../../widgets/irma_app_bar.dart';
+import '../../widgets/irma_bottom_bar.dart';
 import '../../widgets/yivi_themed_button.dart';
 import 'widgets/CodeExportCard.dart';
 
@@ -31,11 +33,6 @@ class MfaExportTabState extends State<MfaExportTab> {
   // Store TOTP entries together with the generated otpauth:// URL
   List<TOTPStoredWithUrl> codes = [];
   List<TOTPStoredWithUrl> codesSelected = [];
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   didChangeDependencies() {
@@ -79,10 +76,10 @@ class MfaExportTabState extends State<MfaExportTab> {
     });
   }
 
-  Future<void> handleExportList() async {
+  Future<void> handleFileExportList() async {
     debugPrint('Exporting list of ${codesSelected.length} codes');
 
-    final buffer = generateExportContent();
+    final buffer = generatePlainExportContent();
 
     final content = buffer.toString();
 
@@ -98,7 +95,9 @@ class MfaExportTabState extends State<MfaExportTab> {
     debugPrint('Exporting ${codesSelected.length} codes');
   }
 
-  StringBuffer generateExportContent() {
+
+
+  StringBuffer generatePlainExportContent() {
     final buffer = StringBuffer();
     for (var code in codesSelected) {
       buffer.writeln('Issuer: ${code.issuer}');
@@ -157,14 +156,13 @@ class MfaExportTabState extends State<MfaExportTab> {
       appBar: IrmaAppBar(
         titleTranslationKey: 'more_tab.mfa_export',
       ),
-      floatingActionButton: SizedBox(
-        width: MediaQuery.of(context).size.width - theme.defaultSpacing * 2,
-        child: YiviThemedButton(
-          label: 'mfa.export_as_file',
-          onPressed: codesSelected.isNotEmpty ? () => handleExportList() : null,
-        ),
+      bottomNavigationBar: IrmaBottomBar(
+        primaryButtonLabel: 'mfa.export_as_file',
+        secondaryButtonLabel: 'mfa.export_as_google',
+        onPrimaryPressed: codesSelected.isNotEmpty ? handleFileExportList : null,
+        onSecondaryPressed: codesSelected.isNotEmpty ? handleFileExportList : null,
+        alignment: IrmaBottomBarAlignment.vertical,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(theme.defaultSpacing),

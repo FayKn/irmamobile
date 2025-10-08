@@ -7,6 +7,7 @@ import '../../../util/simple_icon_utils.dart';
 
 class SimpleIcon extends StatefulWidget {
   final String iconName;
+
   const SimpleIcon({
     super.key,
     required this.iconName,
@@ -23,13 +24,19 @@ class SimpleIcon extends StatefulWidget {
 
 class _SimpleIconState extends State<SimpleIcon> {
   @override
-  Widget build(BuildContext context) {
-    String? colorHex = SimpleIconsUtils().getIconHexColor(widget.iconName);
-    if (colorHex == '000000') {
-      // default to transparent
-      colorHex = 'FFFFFF';
-    }
+  void initState() {
+    super.initState();
+    SimpleIconsUtils().loadIconDataArray().then((_) {
+      setState(() {});
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    String colorHex = 'FFFFFF';
+    setState(() {
+      colorHex = SimpleIconsUtils().getIconHexColor(widget.iconName);
+    });
     Color iconColor = Color(int.parse('0xFF$colorHex'));
     return SvgPicture.asset(
       SimpleIconsUtils.getIconAssetPath(widget.iconName),

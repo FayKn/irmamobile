@@ -633,7 +633,8 @@
   },
   "mfa": {
     "nextCode": "Volgende code: {code}",
-    "export_as_file": "Exporteer als bestand"
+    "export_as_file": "Exporteer als bestand",
+    "export_as_google": "Exporteer naar Google Authenticator"
   },
   "notifications": {
     "title": "Notificaties",

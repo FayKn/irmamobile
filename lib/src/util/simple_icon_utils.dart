@@ -21,33 +21,34 @@ class SimpleIconsUtils {
   }
 
   String getIconHexColor(String iconName) {
+    loadIconDataArray();
     // Load icon data if not already loaded, should only happen once
-    if (icons.isEmpty) {
-      loadIconDataArray();
-    }
-
     final formattedName = getIconName(iconName);
     try {
-      return icons[formattedName] ?? '000000';
+      return icons[formattedName] ?? 'FFFFFF';
     } catch (e) {
-      return '000000'; // Default to black if not found
+      return 'FFFFFF'; // Default to black if not found
     }
   }
 
-  void loadIconDataArray() async {
+  Future<Map<String, dynamic>> loadIconDataArray() async {
+    if (icons.isNotEmpty) {
+      return icons;
+    }
+
     try {
       // Load the JSON file assets/simple-icons/data/simple-icons.json
       String data = await rootBundle.loadString('assets/simple-icons/data/simple-icons-fmt.json');
-
       if (data.isEmpty) {
-        debugPrint('Error: Icon data is empty');
-        return;
+        throw Exception('Icon data is empty');
       }
       Map<String, dynamic> jsonResult = json.decode(data);
       icons = jsonResult.map((key, value) => MapEntry(key.toLowerCase(), value.toString()));
+      return jsonResult;
     } catch (e) {
       // Handle error
       debugPrint('Error loading icon data: $e');
     }
+    return {};
   }
 }
