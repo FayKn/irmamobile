@@ -17,6 +17,7 @@ class SimpleIconsUtils {
 
   static String getIconAssetPath(String iconName) {
     final formattedName = getIconName(iconName);
+
     return 'assets/simple-icons/icons/$formattedName.svg';
   }
 
@@ -25,9 +26,9 @@ class SimpleIconsUtils {
     // Load icon data if not already loaded, should only happen once
     final formattedName = getIconName(iconName);
     try {
-      return icons[formattedName] ?? 'FFFFFF';
+      return icons[formattedName] ?? '';
     } catch (e) {
-      return 'FFFFFF'; // Default to black if not found
+      return '';
     }
   }
 

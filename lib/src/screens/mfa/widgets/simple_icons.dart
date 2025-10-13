@@ -21,21 +21,33 @@ class SimpleIcon extends StatefulWidget {
 }
 
 class _SimpleIconState extends State<SimpleIcon> {
+  bool _loaded = false;
+  String _colorHex = 'FFFFFF';
+
   @override
   void initState() {
     super.initState();
     SimpleIconsUtils().loadIconDataArray().then((_) {
-      setState(() {});
+      setState(() {
+        _colorHex = SimpleIconsUtils().getIconHexColor(widget.iconName);
+        // slight hack to ensure the icon is only shown when it actually exists to avoid an error being thrown by SvgPicture for the missing asset
+        if (_colorHex != '') {
+          _loaded = true;
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String colorHex = 'FFFFFF';
-    setState(() {
-      colorHex = SimpleIconsUtils().getIconHexColor(widget.iconName);
-    });
-    Color iconColor = Color(int.parse('0xFF$colorHex'));
+    if (!_loaded) {
+      return Container(
+        height: widget.height,
+        width: widget.width,
+        color: Colors.transparent,
+      );
+    }
+    Color iconColor = Color(int.parse('0xFF$_colorHex'));
     return SvgPicture.asset(
       SimpleIconsUtils.getIconAssetPath(widget.iconName),
       semanticsLabel: '${widget.iconName} logo',
