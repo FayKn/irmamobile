@@ -4,25 +4,25 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
+import '../../providers/mfa_list_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_icon_button.dart';
 import 'widgets/totp_card.dart';
 
-class MfaTab extends StatefulWidget {
+class MfaTab extends ConsumerStatefulWidget {
   @override
-  State<MfaTab> createState() => _MfaTabState();
+  ConsumerState<MfaTab> createState() => _MfaTabState();
 }
 
-class _MfaTabState extends State<MfaTab> {
+class _MfaTabState extends ConsumerState<MfaTab> {
   Timer? _ticker;
-  List<TOTPcode> codes = [];
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
   bool _reposInitialized = false;
@@ -61,38 +61,22 @@ class _MfaTabState extends State<MfaTab> {
 
   void _removeCode(TOTPcode code) {
     // clone code to get around immutability and pass the same instance but with timerProgress as an int
-    code = TOTPcode(
+    final clone = TOTPcode(
         issuer: code.issuer,
         userAccount: code.userAccount,
         code: code.code,
         nextCode: code.nextCode,
         period: code.period,
         timerProgress: code.timerProgress);
-    // Remove the code from the list and update the state
 
-    _mfaRepo.removeTOTP(code);
-    setState(() {
-      codes.remove(code);
-    });
+    _mfaRepo.removeTOTP(clone);
+    // Trigger a refresh
+    _getCodes();
   }
 
-  Future<void> _getCodes() async {
-    // Dispatch request to get all TOTP secrets
+  void _getCodes() {
+    // Dispatch request to get all TOTP secrets; provider will pick up the event
     _mfaRepo.getAllTOTP();
-
-    try {
-      // Wait for the event with the codes
-      final event = await _irmaRepo.getEvents().whereType<GetAllTOTPSecretsEvent>().first.timeout(Duration(seconds: 1));
-      if (event.codes == null) {
-        timerPaused = true;
-        _startCodeTimers();
-      }
-      setState(() {
-        codes = event.codes ?? [];
-      });
-    } catch (e) {
-      debugPrint('Failed to fetch codes: $e');
-    }
   }
 
   void _startCodeTimers() {
@@ -108,34 +92,46 @@ class _MfaTabState extends State<MfaTab> {
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
 
+    final itemsAsync = ref.watch(mfaOrderControllerProvider);
+    final controller = ref.read(mfaOrderControllerProvider.notifier);
+
     return Scaffold(
-        backgroundColor: IrmaTheme.of(context).backgroundTertiary,
-        appBar: IrmaAppBar(
-          titleTranslationKey: 'home.nav_bar.mfa',
-          leading: null,
-          actions: [
-            IrmaIconButton(
-              icon: CupertinoIcons.add_circled_solid,
-              size: 28,
-              onTap: _addCode,
-            ),
-          ],
-        ),
-        body: ReorderableListView.builder(
+      backgroundColor: IrmaTheme.of(context).backgroundTertiary,
+      appBar: IrmaAppBar(
+        titleTranslationKey: 'home.nav_bar.mfa',
+        leading: null,
+        actions: [
+          IrmaIconButton(
+            icon: CupertinoIcons.add_circled_solid,
+            size: 28,
+            onTap: _addCode,
+          ),
+        ],
+      ),
+      body: itemsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+        data: (codes) {
+          timerPaused = codes.isEmpty;
+          if (timerPaused) {
+            _startCodeTimers();
+          }
+          return ReorderableListView.builder(
             onReorderStart: (index) {
               HapticFeedback.mediumImpact();
+              // Suppress incoming updates during drag to avoid snap-back
+              ref.read(mfaDraggingProvider.notifier).state = true;
+              // Pause periodic fetch while dragging
+              _ticker?.cancel();
             },
             onReorderEnd: (index) {
               HapticFeedback.mediumImpact();
+              // Re-enable updates
+              ref.read(mfaDraggingProvider.notifier).state = false;
+              // Resume periodic fetch after drag ends
+              _startCodeTimers();
             },
-            onReorder: (oldIndex, newIndex) {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
-              final item = codes.removeAt(oldIndex);
-              codes.insert(newIndex, item);
-              setState(() {});
-            },
+            onReorder: controller.reorder,
             proxyDecorator: (child, index, animation) {
               return Material(
                 type: MaterialType.transparency,
@@ -144,22 +140,29 @@ class _MfaTabState extends State<MfaTab> {
             },
             padding: EdgeInsets.all(theme.defaultSpacing),
             itemCount: codes.length,
-            // buildDefaultDragHandles: false,
+            buildDefaultDragHandles: false,
             itemBuilder: (BuildContext context, int index) {
               final code = codes[index];
               return Padding(
                 key: ValueKey(code.issuer + code.userAccount),
                 padding: EdgeInsets.only(bottom: theme.smallSpacing),
-                child: TotpCard(
-                  serviceName: code.issuer,
-                  userName: code.userAccount,
-                  currentCode: code.code,
-                  nextCode: code.nextCode,
-                  period: code.period,
-                  timerProgress: code.timerProgress,
-                  onDelete: () => _removeCode(code),
+                child: ReorderableDelayedDragStartListener(
+                  index: index,
+                  child: TotpCard(
+                    serviceName: code.issuer,
+                    userName: code.userAccount,
+                    currentCode: code.code,
+                    nextCode: code.nextCode,
+                    period: code.period,
+                    timerProgress: code.timerProgress,
+                    onDelete: () => _removeCode(code),
+                  ),
                 ),
               );
-            }));
+            },
+          );
+        },
+      ),
+    );
   }
 }
