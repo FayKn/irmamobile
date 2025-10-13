@@ -64,15 +64,21 @@ class _CodeExportcardState extends State<CodeExportcard> {
                     codeBlurred = !codeBlurred;
                   });
                 },
-                child: ImageFiltered(
-                  imageFilter:
-                      codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                  child: QrImageView(
-                    errorCorrectionLevel: QrErrorCorrectLevel.L,
-                    data: widget.code.url,
-                    version: QrVersions.auto,
-                    size: 150,
-                  ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(codeBlurred ? Icons.touch_app : null, size: 80, color: theme.dark),
+                    ImageFiltered(
+                      imageFilter:
+                          codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                      child: QrImageView(
+                        errorCorrectionLevel: QrErrorCorrectLevel.L,
+                        data: widget.code.url,
+                        version: QrVersions.auto,
+                        size: 150,
+                      ),
+                    ),
+                  ],
                 ),
               )
             ],

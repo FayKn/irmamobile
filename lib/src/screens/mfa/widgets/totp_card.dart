@@ -98,13 +98,13 @@ class TotpCard extends StatelessWidget {
                               serviceName,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: 16,
                               ),
                             ),
                             Text(
                               userName,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 10,
+                                fontSize: 12,
                                 decoration: TextDecoration.underline,
                                 color: theme.neutralExtraDark,
                               ),
