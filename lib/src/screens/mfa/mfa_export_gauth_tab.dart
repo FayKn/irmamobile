@@ -45,21 +45,20 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
     // build list of TOTPStored from selected entries by removing the URL
     final List<TOTPStored> codesSelected = widget.codesSelected
         .map((e) => TOTPStored(
-      issuer: e.issuer,
-      userAccount: e.userAccount,
-      secret: e.secret,
-      period: e.period,
-      algorithm: e.algorithm,
-    ))
+              issuer: e.issuer,
+              userAccount: e.userAccount,
+              secret: e.secret,
+              period: e.period,
+              algorithm: e.algorithm,
+            ))
         .toList();
-
 
     _mfaRepo.exportTOTPToURL(codesSelected, isGoogle: true);
 
     try {
       // Wait for the event with the codes
       final event =
-      await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
+          await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
       setState(() {
         debugPrint('Received URLs: ${event.urls}');
         googleMigrationUrl = (event.urls!.isNotEmpty ? event.urls?.first : '')!;

@@ -70,7 +70,7 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
     // Listen to external source and reconcile on each update
     ref.listen<AsyncValue<List<TOTPcode>>>(
       mfaCodesProvider,
-          (prev, next) async {
+      (prev, next) async {
         final items = next.valueOrNull;
         if (items == null) {
           return;
@@ -138,7 +138,7 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
     _debounce?.cancel();
     _debounce = Timer(
       const Duration(milliseconds: 400),
-          () async {
+      () async {
         await ref.read(mfaOrderRepoProvider).saveOrder(
               items.map(_codeKey).toList(),
             );
