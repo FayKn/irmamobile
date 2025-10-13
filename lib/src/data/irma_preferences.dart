@@ -32,6 +32,7 @@ class IrmaPreferences {
         _showNameChangedNotification = preferences.getBool(_showNameChangedNotificationKey, defaultValue: true),
         _lastSchemeUpdate = preferences.getInt(_lastSchemeUpdateKey, defaultValue: 0),
         _serializedNotifications = preferences.getString(_serializedNotificationsKey, defaultValue: ''),
+        _mfaOrder = preferences.getStringList('preference.mfa_order', defaultValue: []),
         _credentialOrder = preferences.getStringList(_credentialOrderKey, defaultValue: []) {
     // Remove unused IRMA -> Yivi name change notification key
     preferences.remove(_showNameChangeNotificationKey);
@@ -87,6 +88,8 @@ class IrmaPreferences {
   static const String _credentialOrderKey = 'preference.credential_order';
   // list of credential ids stored as json string
   final Preference<List<String>> _credentialOrder;
+  // list of mfa issuer+userAccount stored as json string
+  final Preference<List<String>> _mfaOrder;
 
   // =============================================================================
 
@@ -140,6 +143,10 @@ class IrmaPreferences {
   List<String> getCredentialOrder() => _credentialOrder.getValue();
 
   Future<bool> setCredentialOrder(List<String> order) => _credentialOrder.setValue(order);
+
+  List<String> getMFAOrder() => _mfaOrder.getValue();
+
+  Future<bool> setMFAOrder(List<String> order) => _mfaOrder.setValue(order);
 
   Future<void> clearAll() {
     // Reset all preferences to their default values

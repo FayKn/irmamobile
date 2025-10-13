@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../data/irma_repository.dart';
@@ -10,7 +11,6 @@ import '../../data/mfa_repository.dart';
 import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
-import '../../util/navigation.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_icon_button.dart';
 import 'widgets/totp_card.dart';
@@ -109,51 +109,57 @@ class _MfaTabState extends State<MfaTab> {
     final theme = IrmaTheme.of(context);
 
     return Scaffold(
-      backgroundColor: IrmaTheme.of(context).backgroundTertiary,
-      appBar: IrmaAppBar(
-        titleTranslationKey: 'home.nav_bar.mfa',
-        leading: null,
-        actions: [
-          IrmaIconButton(
-            icon: CupertinoIcons.add_circled_solid,
-            size: 28,
-            onTap: context.pushAddDataScreen,
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.all(theme.defaultSpacing),
-        child: Column(
-          spacing: theme.defaultSpacing,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: codes
-              .map(
-                (code) => TotpCard(
-                    serviceName: code.issuer,
-                    userName: code.userAccount,
-                    currentCode: code.code,
-                    nextCode: code.nextCode,
-                    period: code.period,
-                    timerProgress: code.timerProgress,
-                    onDelete: () => _removeCode(code)),
-              )
-              .toList(),
+        backgroundColor: IrmaTheme.of(context).backgroundTertiary,
+        appBar: IrmaAppBar(
+          titleTranslationKey: 'home.nav_bar.mfa',
+          leading: null,
+          actions: [
+            IrmaIconButton(
+              icon: CupertinoIcons.add_circled_solid,
+              size: 28,
+              onTap: _addCode,
+            ),
+          ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(
-          side: BorderSide(
-            color: theme.primary,
-            width: 4.0,
-          ),
-        ),
-        onPressed: () {
-          _addCode();
-          // Add your onPressed code here!
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+        body: ReorderableListView.builder(
+            onReorderStart: (index) {
+              HapticFeedback.mediumImpact();
+            },
+            onReorderEnd: (index) {
+              HapticFeedback.mediumImpact();
+            },
+            onReorder: (oldIndex, newIndex) {
+              if (newIndex > oldIndex) {
+                newIndex -= 1;
+              }
+              final item = codes.removeAt(oldIndex);
+              codes.insert(newIndex, item);
+              setState(() {});
+            },
+            proxyDecorator: (child, index, animation) {
+              return Material(
+                type: MaterialType.transparency,
+                child: child,
+              );
+            },
+            padding: EdgeInsets.all(theme.defaultSpacing),
+            itemCount: codes.length,
+            // buildDefaultDragHandles: false,
+            itemBuilder: (BuildContext context, int index) {
+              final code = codes[index];
+              return Padding(
+                key: ValueKey(code.issuer + code.userAccount),
+                padding: EdgeInsets.only(bottom: theme.smallSpacing),
+                child: TotpCard(
+                  serviceName: code.issuer,
+                  userName: code.userAccount,
+                  currentCode: code.code,
+                  nextCode: code.nextCode,
+                  period: code.period,
+                  timerProgress: code.timerProgress,
+                  onDelete: () => _removeCode(code),
+                ),
+              );
+            }));
   }
 }
