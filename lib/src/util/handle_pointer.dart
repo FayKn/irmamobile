@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../data/mfa_repository.dart';
 import '../models/issue_wizard.dart';
-import '../models/mfa_events.dart';
 import '../models/session.dart';
 import '../models/session_events.dart';
 import '../providers/irma_repository_provider.dart';

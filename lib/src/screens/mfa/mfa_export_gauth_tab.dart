@@ -37,7 +37,6 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
       _irmaRepo = IrmaRepositoryProvider.of(context);
       _mfaRepo = MfaRepository(irmaRepository: _irmaRepo);
       _reposInitialized = true;
-
       _getGoogleTOTPURL();
     }
   }
