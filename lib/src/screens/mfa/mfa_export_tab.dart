@@ -16,6 +16,7 @@ import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
+import '../../widgets/translated_text.dart';
 import 'mfa_export_gauth_tab.dart';
 import 'widgets/CodeExportCard.dart';
 
@@ -103,7 +104,6 @@ class MfaExportTabState extends State<MfaExportTab> {
     );
   }
 
-
   StringBuffer generatePlainExportContent() {
     final buffer = StringBuffer();
     for (var code in codesSelected) {
@@ -173,26 +173,28 @@ class MfaExportTabState extends State<MfaExportTab> {
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(theme.defaultSpacing),
-        child: Column(
-          spacing: theme.defaultSpacing,
-          children: codes
-              .map(
-                (entry) => InkWell(
-                  onLongPress: () {
-                    setState(() {
-                      changeSelection(entry, false);
-                    });
-                  },
-                  onTap: () {
-                    setState(() {
-                      changeSelection(entry, true);
-                    });
-                  },
-                  child: CodeExportcard(code: entry, codeselected: codesSelected),
-                ),
-              )
-              .toList(),
-        ),
+        child: Column(spacing: theme.defaultSpacing, children: [
+          Column(
+            spacing: theme.defaultSpacing,
+            children: codes
+                .map(
+                  (entry) => InkWell(
+                    onLongPress: () {
+                      setState(() {
+                        changeSelection(entry, false);
+                      });
+                    },
+                    onTap: () {
+                      setState(() {
+                        changeSelection(entry, true);
+                      });
+                    },
+                    child: CodeExportcard(code: entry, codeselected: codesSelected),
+                  ),
+                )
+                .toList(),
+          ),
+        ]),
       ),
     );
   }

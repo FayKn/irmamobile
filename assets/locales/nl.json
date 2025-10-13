@@ -632,6 +632,7 @@
     "explanation": "Onder de motorkap is alles hetzelfde gebleven, je kunt gewoon inloggen met je oude PIN-code."
   },
   "mfa": {
+    "explanation": "Als je een andere MFA-app wilt gebruiken of een back-up wilt maken, kun je de codes ingedrukt houden om een export te doen van meerdere codes of de individuele QR-codes te scannen.",
     "nextCode": "Volgende code: {code}",
     "export_as_file": "Exporteer als bestand",
     "export_as_google": "Exporteer naar Google Authenticator"
