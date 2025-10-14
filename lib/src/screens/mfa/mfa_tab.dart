@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../routing.dart';
 
 import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
@@ -22,7 +23,7 @@ class MfaTab extends ConsumerStatefulWidget {
   ConsumerState<MfaTab> createState() => MfaTabState();
 }
 
-class MfaTabState extends ConsumerState<MfaTab> {
+class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
   Timer? _ticker;
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
@@ -34,6 +35,8 @@ class MfaTabState extends ConsumerState<MfaTab> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Subscribe to route changes so we can pause the timer when navigating away from this screen for the manual add screen
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
     if (!_reposInitialized) {
       _irmaRepo = IrmaRepositoryProvider.of(context);
       _mfaRepo = MfaRepository(irmaRepository: _irmaRepo);
@@ -45,6 +48,7 @@ class MfaTabState extends ConsumerState<MfaTab> {
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _ticker?.cancel();
     super.dispose();
   }
@@ -79,12 +83,21 @@ class MfaTabState extends ConsumerState<MfaTab> {
   }
 
   @override
+  void didPushNext() {
+    timerPaused = true;
+    _ticker?.cancel();
+  }
+
+  @override
+  void didPopNext() {
+    timerPaused = false;
+    _startCodeTimers();
+  }
+
+  @override
   Widget build(BuildContext context) {
     void addManualCode() {
       debugPrint('Add manual code');
-      // timerPaused = true;
-      // _ticker?.cancel();
-
       context.pushMFAManualAddScreen();
     }
 
