@@ -67,7 +67,6 @@ class _CodeExportcardState extends State<CodeExportcard> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Icon(codeBlurred ? Icons.touch_app : null, size: 80, color: theme.dark),
                     ImageFiltered(
                       imageFilter:
                           codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
@@ -78,6 +77,7 @@ class _CodeExportcardState extends State<CodeExportcard> {
                         size: 150,
                       ),
                     ),
+                    Icon(codeBlurred ? Icons.touch_app : null, size: 80, color: theme.light),
                   ],
                 ),
               )
