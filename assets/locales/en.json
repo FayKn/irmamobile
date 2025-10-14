@@ -632,10 +632,14 @@
     "explanation": "Everything remained the same under the hood, you can log in with your old PIN code."
   },
   "mfa": {
-    "explanation": "If you want to use another MFA app or want to make a backup, you can tap and hold the codes to do a mass export or scan the individual QR codes.",
     "nextCode": "Next code: {code}",
     "export_as_file": "Export as file",
     "export_as_google": "Export to Google Authenticator",
+    "export": {
+      "as_file": "Export as file",
+      "as_google": "Export to Google Authenticator",
+      "explanation": "If you want to use another MFA app or want to make a backup, you can tap and hold the codes to do a mass export or scan the individual QR codes."
+    },
     "manual": {
       "title": "Add 2FA code",
       "secret": "Secret",

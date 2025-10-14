@@ -16,6 +16,7 @@ import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
+import '../../widgets/translated_text.dart';
 import 'mfa_export_gauth_tab.dart';
 import 'widgets/CodeExportCard.dart';
 
@@ -163,8 +164,8 @@ class MfaExportTabState extends State<MfaExportTab> {
         titleTranslationKey: 'more_tab.mfa_export',
       ),
       bottomNavigationBar: IrmaBottomBar(
-        primaryButtonLabel: 'mfa.export_as_file',
-        secondaryButtonLabel: 'mfa.export_as_google',
+        primaryButtonLabel: 'mfa.export.as_file',
+        secondaryButtonLabel: 'mfa.export.as_google',
         onPrimaryPressed: codesSelected.isNotEmpty ? handleFileExportList : null,
         onSecondaryPressed: codesSelected.isNotEmpty ? goToGoogleAuthCode : null,
         alignment: IrmaBottomBarAlignment.vertical,
@@ -173,6 +174,7 @@ class MfaExportTabState extends State<MfaExportTab> {
         physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(theme.defaultSpacing),
         child: Column(spacing: theme.defaultSpacing, children: [
+          TranslatedText('mfa.export.explanation'),
           Column(
             spacing: theme.defaultSpacing,
             children: codes
