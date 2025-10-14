@@ -635,7 +635,15 @@
     "explanation": "If you want to use another MFA app or want to make a backup, you can tap and hold the codes to do a mass export or scan the individual QR codes.",
     "nextCode": "Next code: {code}",
     "export_as_file": "Export as file",
-    "export_as_google": "Export to Google Authenticator"
+    "export_as_google": "Export to Google Authenticator",
+    "manual": {
+      "title": "Add 2FA code",
+      "secret": "Secret",
+      "issuer": "Service name",
+      "account": "Account name",
+      "algorithm": "Algorithm",
+      "period": "Period"
+    }
   },
   "notifications": {
     "title": "Notifications",

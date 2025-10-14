@@ -16,7 +16,6 @@ import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
-import '../../widgets/translated_text.dart';
 import 'mfa_export_gauth_tab.dart';
 import 'widgets/CodeExportCard.dart';
 

@@ -158,6 +158,10 @@ extension RoutingHelpers on BuildContext {
   void goMFAExportScreen() {
     go('/home/mfa_export');
   }
+
+  void pushMFAManualAddScreen() {
+    push('/home/mfa_manual_entry');
+  }
 }
 
 // =============================================================================================

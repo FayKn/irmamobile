@@ -12,16 +12,17 @@ import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../providers/mfa_list_provider.dart';
 import '../../theme/theme.dart';
+import '../../util/navigation.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_icon_button.dart';
 import 'widgets/totp_card.dart';
 
 class MfaTab extends ConsumerStatefulWidget {
   @override
-  ConsumerState<MfaTab> createState() => _MfaTabState();
+  ConsumerState<MfaTab> createState() => MfaTabState();
 }
 
-class _MfaTabState extends ConsumerState<MfaTab> {
+class MfaTabState extends ConsumerState<MfaTab> {
   Timer? _ticker;
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
@@ -46,17 +47,6 @@ class _MfaTabState extends ConsumerState<MfaTab> {
   void dispose() {
     _ticker?.cancel();
     super.dispose();
-  }
-
-  void _addCode() {
-    var code = TOTPStored(
-        secret: 'WL5RMI2PVYKEIQQNR', issuer: 'Cloudflare', userAccount: 'test.nl', period: 30, algorithm: 'SHA1');
-    // Placeholder for adding a new MFA code
-    // In a real app, this would involve scanning a QR code or entering details manually
-    _mfaRepo.storeTOTP(code);
-    timerPaused = false;
-    _getCodes();
-    _startCodeTimers();
   }
 
   void _removeCode(TOTPcode code) {
@@ -90,6 +80,14 @@ class _MfaTabState extends ConsumerState<MfaTab> {
 
   @override
   Widget build(BuildContext context) {
+    void addManualCode() {
+      debugPrint('Add manual code');
+      // timerPaused = true;
+      // _ticker?.cancel();
+
+      context.pushMFAManualAddScreen();
+    }
+
     final theme = IrmaTheme.of(context);
 
     final itemsAsync = ref.watch(mfaOrderControllerProvider);
@@ -104,7 +102,7 @@ class _MfaTabState extends ConsumerState<MfaTab> {
           IrmaIconButton(
             icon: CupertinoIcons.add_circled_solid,
             size: 28,
-            onTap: _addCode,
+            onTap: addManualCode,
           ),
         ],
       ),

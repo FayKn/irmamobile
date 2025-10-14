@@ -29,6 +29,7 @@ import 'src/screens/issue_wizard/issue_wizard.dart';
 import 'src/screens/issue_wizard/widgets/issue_wizard_success_screen.dart';
 import 'src/screens/loading/loading_screen.dart';
 import 'src/screens/mfa/mfa_export_tab.dart';
+import 'src/screens/mfa/mfa_manual_entry_tab.dart';
 import 'src/screens/mfa/mfa_tab.dart';
 import 'src/screens/name_changed/name_changed_screen.dart';
 import 'src/screens/notifications/notifications_tab.dart';
@@ -192,6 +193,7 @@ GoRouter createRouter(BuildContext buildContext, WidgetRef ref) {
           ),
           GoRoute(path: 'mfa', builder: (context, state) => MfaTab()),
           GoRoute(path: 'mfa_export', builder: (context, state) => MfaExportTab()),
+          GoRoute(path: 'mfa_manual_entry', builder: (context, state) => MfaManualEntryTab()),
         ],
       ),
       GoRoute(
