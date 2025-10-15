@@ -40,6 +40,7 @@ class ExportSecretsInputToUrlEvent extends Event {
 
   factory ExportSecretsInputToUrlEvent.fromJson(Map<String, dynamic> json) =>
       _$ExportSecretsInputToUrlEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$ExportSecretsInputToUrlEventToJson(this);
 }
 
@@ -51,6 +52,7 @@ class ExportSecretsToUrlEvent extends Event {
   final List<String>? urls;
 
   factory ExportSecretsToUrlEvent.fromJson(Map<String, dynamic> json) => _$ExportSecretsToUrlEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$ExportSecretsToUrlEventToJson(this);
 }
 
@@ -62,6 +64,7 @@ class StoreTOTPSecretByURLEvent extends Event {
   final String inputUrl;
 
   factory StoreTOTPSecretByURLEvent.fromJson(Map<String, dynamic> json) => _$StoreTOTPSecretByURLEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$StoreTOTPSecretByURLEventToJson(this);
 }
 
@@ -85,7 +88,49 @@ class RemoveTOTPSecretEvent extends Event {
   final TOTPcode code;
 
   factory RemoveTOTPSecretEvent.fromJson(Map<String, dynamic> json) => _$RemoveTOTPSecretEventFromJson(json);
+
   Map<String, dynamic> toJson() => _$RemoveTOTPSecretEventToJson(this);
+}
+
+@JsonSerializable()
+class EncryptExportFileSendEvent extends Event {
+  EncryptExportFileSendEvent({required this.encryptedFile, required this.password});
+
+  @JsonKey(name: 'EncryptedFile')
+  final String encryptedFile;
+
+  @JsonKey(name: 'Password')
+  final String password;
+
+  factory EncryptExportFileSendEvent.fromJson(Map<String, dynamic> json) => _$EncryptExportFileSendEventFromJson(json);
+  Map<String, dynamic> toJson() => _$EncryptExportFileSendEventToJson(this);
+}
+
+@JsonSerializable()
+class DecryptExportFileSendEvent extends Event {
+  DecryptExportFileSendEvent({required this.encryptedFile, required this.password});
+
+  @JsonKey(name: 'EncryptedFile')
+  final String encryptedFile;
+
+  @JsonKey(name: 'Password')
+  final String password;
+
+  factory DecryptExportFileSendEvent.fromJson(Map<String, dynamic> json) => _$DecryptExportFileSendEventFromJson(json);
+  Map<String, dynamic> toJson() => _$DecryptExportFileSendEventToJson(this);
+}
+
+@JsonSerializable()
+class EncryptExportFileReceiveEvent extends Event {
+  EncryptExportFileReceiveEvent({required this.content});
+
+  @JsonKey(name: 'Content')
+  final String content;
+
+  factory EncryptExportFileReceiveEvent.fromJson(Map<String, dynamic> json) =>
+      _$EncryptExportFileReceiveEventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EncryptExportFileReceiveEventToJson(this);
 }
 
 @JsonSerializable()
@@ -110,6 +155,7 @@ class TOTPStored {
   });
 
   factory TOTPStored.fromJson(Map<String, dynamic> json) => _$TOTPStoredFromJson(json);
+
   Map<String, dynamic> toJson() => _$TOTPStoredToJson(this);
 }
 
@@ -138,5 +184,6 @@ class TOTPcode {
   });
 
   factory TOTPcode.fromJson(Map<String, dynamic> json) => _$TOTPcodeFromJson(json);
+
   Map<String, dynamic> toJson() => _$TOTPcodeToJson(this);
 }

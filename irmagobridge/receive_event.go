@@ -147,7 +147,17 @@ func DispatchFromNative(eventName, payloadString string) {
 		if err = json.Unmarshal(payloadBytes, &event); err == nil {
 			err = bridgeEventHandler.RemoveTOTPSecretByCode(event)
 		}
+	case "EncryptExportFileSendEvent":
+		event := &EncryptExportFileSendEvent{}
+		if err = json.Unmarshal(payloadBytes, &event); err == nil {
+			err = bridgeEventHandler.EncryptExportFile(event)
+		}
 
+	case "DecryptExportFileSendEvent":
+		event := &EncryptExportFileSendEvent{}
+		if err = json.Unmarshal(payloadBytes, &event); err == nil {
+			err = bridgeEventHandler.DecryptExportFile(event)
+		}
 	}
 
 	if err != nil {

@@ -636,6 +636,11 @@
     "export_as_file": "Export as file",
     "export_as_google": "Export to Google Authenticator",
     "export": {
+      "password_popup_title": "Enter password to the export file",
+      "password_popup_hint": "Password",
+      "password_popup_cancel": "Cancel",
+      "password_popup_confirm": "Save",
+      "import_file": "Import file",
       "as_file": "Export as file",
       "as_google": "Export to Google Authenticator",
       "explanation": "If you want to use another MFA app or want to make a backup, you can tap and hold the codes to do a mass export or scan the individual QR codes."

@@ -18,7 +18,8 @@ import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
 import '../../widgets/translated_text.dart';
 import 'mfa_export_gauth_tab.dart';
-import 'widgets/CodeExportCard.dart';
+import 'widgets/code_export_card.dart';
+import 'widgets/mfa_password_popup.dart';
 
 class MfaExportTab extends StatefulWidget {
   @override
@@ -79,9 +80,31 @@ class MfaExportTabState extends State<MfaExportTab> {
   Future<void> handleFileExportList() async {
     debugPrint('Exporting list of ${codesSelected.length} codes');
 
-    final buffer = generatePlainExportContent();
+    var password = await showPasswordDialog(context, 'mfa.export.password_popup_confirm');
 
-    final content = buffer.toString();
+    if (password == null || password.isEmpty) {
+      debugPrint('Export cancelled: no password provided');
+      return;
+    }
+
+    var content = generatePlainExportContent().toString();
+
+    debugPrint(content);
+
+    _mfaRepo.encryptExportFile(password, content);
+    try {
+      // Wait for the event with the codes
+      final event =
+          await _irmaRepo.getEvents().whereType<EncryptExportFileReceiveEvent>().first.timeout(Duration(seconds: 2));
+      content = event.content;
+    } catch (e) {
+      debugPrint('Export failed: $e');
+      return;
+    }
+
+    debugPrint(content);
+
+    var buffer = StringBuffer(content);
 
     switch (Platform.operatingSystem) {
       case 'android':

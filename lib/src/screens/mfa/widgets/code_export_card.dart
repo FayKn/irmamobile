@@ -14,10 +14,10 @@ class CodeExportcard extends StatefulWidget {
   const CodeExportcard({super.key, required this.code, this.codeselected});
 
   @override
-  State<CodeExportcard> createState() => _CodeExportcardState();
+  State<CodeExportcard> createState() => _CodeExportCardState();
 }
 
-class _CodeExportcardState extends State<CodeExportcard> {
+class _CodeExportCardState extends State<CodeExportcard> {
   bool codeBlurred = true;
 
   @override

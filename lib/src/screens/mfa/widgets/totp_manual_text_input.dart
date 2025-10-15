@@ -38,7 +38,7 @@ class TotpManualTextInput extends StatelessWidget {
           else if (formatter == Formatters.special)
             FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9!@#\$%\^&\*\(\)_\+\-=\[\]\{\};:"\\|,.<>\/\?`~ ]'))
           else
-          FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
+            FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
         ],
         decoration: InputDecoration(
           hint: TranslatedText(
@@ -53,7 +53,6 @@ class TotpManualTextInput extends StatelessWidget {
           floatingLabelAlignment: FloatingLabelAlignment.start,
           floatingLabelBehavior: FloatingLabelBehavior.always,
         ),
-        autovalidateMode: AutovalidateMode.onUserInteraction
-    );
+        autovalidateMode: AutovalidateMode.onUserInteraction);
   }
 }

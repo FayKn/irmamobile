@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../data/irma_repository.dart';
 import '../../data/mfa_repository.dart';
@@ -7,6 +11,7 @@ import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
 import '../../widgets/irma_bottom_bar.dart';
+import 'widgets/mfa_password_popup.dart';
 import 'widgets/totp_manual_text_input.dart';
 
 class MfaManualEntryTab extends StatefulWidget {
@@ -28,6 +33,7 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
   late IrmaRepository _irmaRepo;
   late MfaRepository _mfaRepo;
   bool _reposInitialized = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -69,11 +75,45 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
       final user = _userNameCtrl.text;
       final period = int.tryParse(_periodCtrl.text) ?? 30;
       final algorithm = _selectedAlgorithm?.label ?? 'SHA1';
-      final code = TOTPStored(
-          secret: secret, issuer: issuer, userAccount: user, period: period, algorithm: algorithm);
+      final code = TOTPStored(secret: secret, issuer: issuer, userAccount: user, period: period, algorithm: algorithm);
       _mfaRepo.storeTOTP(code);
       Navigator.of(context).pop();
     }
+  }
+
+  void _handleFileImport() {
+    showPasswordDialog(context, 'mfa.export.password_popup_confirm').then((password) async {
+      if (password != null && password.isNotEmpty) {
+        FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+        if (result != null) {
+          File file = File(result.files.single.path!);
+
+          var fileStr = await file.readAsString();
+
+          debugPrint('Importing codes from file');
+          debugPrint(fileStr);
+
+          _mfaRepo.decryptExportFile(password, fileStr);
+
+          try {
+            // Wait for the event with the codes
+            final event = await _irmaRepo.getEvents().whereType<EncryptExportFileReceiveEvent>().first.timeout(Duration(seconds: 2));
+            if (event.content.isNotEmpty) {
+              debugPrint('Importing codes from file');
+              debugPrint(event.content);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
+            }
+          } catch (e) {
+            debugPrint('Failed to import codes: $e');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
+          }
+        }
+
+        return;
+      }
+    });
   }
 
   @override
@@ -122,10 +162,10 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
                           child: Padding(
                             padding: EdgeInsets.only(top: 10),
                             child: TotpManualTextInput(
-                            controller: _periodCtrl,
-                            translationKey: 'mfa.manual.period',
-                            inputKey: 'period',
-                            formatter: Formatters.numerical,
+                              controller: _periodCtrl,
+                              translationKey: 'mfa.manual.period',
+                              inputKey: 'period',
+                              formatter: Formatters.numerical,
                             ),
                           ),
                         ),
@@ -159,10 +199,11 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
         ),
       ),
       bottomNavigationBar: IrmaBottomBar(
-        primaryButtonLabel: 'ui.continue',
+        primaryButtonLabel: 'mfa.export.password_popup_confirm',
         onPrimaryPressed: _canContinue ? _onContinuePressed : null,
-        secondaryButtonLabel: 'ui.cancel',
-        onSecondaryPressed: Navigator.of(context).pop,
+        secondaryButtonLabel: 'mfa.export.import_file',
+        onSecondaryPressed: _handleFileImport,
+        alignment: IrmaBottomBarAlignment.horizontal,
       ),
     );
   }

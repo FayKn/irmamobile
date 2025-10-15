@@ -29,4 +29,12 @@ class MfaRepository {
   void removeTOTP(TOTPcode code) {
     irmaRepository.bridgedDispatch(RemoveTOTPSecretEvent(code: code));
   }
+
+  void encryptExportFile(String password, String encryptedFile) {
+    irmaRepository.bridgedDispatch(EncryptExportFileSendEvent(password: password, encryptedFile: encryptedFile));
+  }
+
+  void decryptExportFile(String password, String encryptedFile) {
+    irmaRepository.bridgedDispatch(DecryptExportFileSendEvent(password: password, encryptedFile: encryptedFile));
+  }
 }

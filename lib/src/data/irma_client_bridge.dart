@@ -79,6 +79,10 @@ class IrmaClientBridge extends IrmaBridge {
 
     RemoveTOTPSecretEvent: (j) => RemoveTOTPSecretEvent.fromJson(j),
 
+    DecryptExportFileSendEvent: (j) => DecryptExportFileSendEvent.fromJson(j),
+    EncryptExportFileSendEvent: (j) => EncryptExportFileSendEvent.fromJson(j),
+    EncryptExportFileReceiveEvent: (j) => EncryptExportFileReceiveEvent.fromJson(j),
+
     // FooBar: (j) => FooBar.fromJson(j),
   };
 

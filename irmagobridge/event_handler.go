@@ -349,3 +349,38 @@ func (ah *eventHandler) RemoveTOTPSecretByCode(event *RemoveTOTPSecretEvent) err
 
 	return nil
 }
+
+func (ah *eventHandler) EncryptExportFile(event *EncryptExportFileSendEvent) error {
+	if mfaClient == nil {
+		return errors.New("2FA client not initialized")
+	}
+
+	encryptedContent, err := mfaClient.EncryptExportFile(event.FileContent, event.Password)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Decrypted content:", encryptedContent) // Debug print to verify content
+
+	dispatchEvent(&EncryptExportFileReceiveEvent{
+		Content: encryptedContent,
+	})
+
+	return nil
+}
+
+func (ah *eventHandler) DecryptExportFile(event *EncryptExportFileSendEvent) error {
+	if mfaClient == nil {
+		return errors.New("2FA client not initialized")
+	}
+	fileContent, err := mfaClient.DecryptExportFile(event.FileContent, event.Password)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Decrypted content:", fileContent) // Debug print to verify content
+
+	dispatchEvent(&EncryptExportFileReceiveEvent{
+		Content: fileContent,
+	})
+	return nil
+}

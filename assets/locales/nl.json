@@ -634,6 +634,11 @@
   "mfa": {
     "nextCode": "Volgende code: {code}",
     "export": {
+      "password_popup_title": "Voer het wachtwoord in voor de export",
+      "password_popup_hint": "Wachtwoord",
+      "password_popup_cancel": "Annuleren",
+      "password_popup_confirm": "Opslaan",
+      "import_file": "Importeer een bestand",
       "as_file":  "Exporteer als bestand",
       "as_google": "Exporteer naar Google Authenticator",
       "explanation": "Als je een andere MFA-app wilt gebruiken of een back-up wilt maken, kun je de codes ingedrukt houden om een export te doen van meerdere codes of de individuele QR-codes te scannen."

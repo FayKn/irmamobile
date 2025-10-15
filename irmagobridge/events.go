@@ -265,6 +265,15 @@ type RemoveTOTPSecretEvent struct {
 	Code TwoFa.TOTPcode
 }
 
+type EncryptExportFileSendEvent struct {
+	Password    string
+	FileContent string
+}
+
+type EncryptExportFileReceiveEvent struct {
+	Content string
+}
+
 // //
 // Embedded types
 // //

@@ -42,7 +42,7 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
       _mfaRepo = MfaRepository(irmaRepository: _irmaRepo);
       _reposInitialized = true;
     }
-    _getCodes();
+    _mfaRepo.getAllTOTP();
     _startCodeTimers();
   }
 
@@ -65,11 +65,6 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
 
     _mfaRepo.removeTOTP(clone);
     // Trigger a refresh
-    _getCodes();
-  }
-
-  void _getCodes() {
-    // Dispatch request to get all TOTP secrets; provider will pick up the event
     _mfaRepo.getAllTOTP();
   }
 
@@ -78,7 +73,7 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
     if (timerPaused) return;
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      _getCodes();
+      _mfaRepo.getAllTOTP();
     });
   }
 
