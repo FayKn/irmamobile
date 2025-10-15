@@ -96,7 +96,7 @@ class RemoveTOTPSecretEvent extends Event {
 class EncryptExportFileSendEvent extends Event {
   EncryptExportFileSendEvent({required this.encryptedFile, required this.password});
 
-  @JsonKey(name: 'EncryptedFile')
+  @JsonKey(name: 'FileContent')
   final String encryptedFile;
 
   @JsonKey(name: 'Password')
@@ -110,7 +110,7 @@ class EncryptExportFileSendEvent extends Event {
 class DecryptExportFileSendEvent extends Event {
   DecryptExportFileSendEvent({required this.encryptedFile, required this.password});
 
-  @JsonKey(name: 'EncryptedFile')
+  @JsonKey(name: 'FileContent')
   final String encryptedFile;
 
   @JsonKey(name: 'Password')

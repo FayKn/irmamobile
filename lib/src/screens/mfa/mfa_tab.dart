@@ -92,7 +92,6 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
   @override
   Widget build(BuildContext context) {
     void addManualCode() {
-      debugPrint('Add manual code');
       context.pushMFAManualAddScreen();
     }
 

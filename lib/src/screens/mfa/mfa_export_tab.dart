@@ -78,8 +78,6 @@ class MfaExportTabState extends State<MfaExportTab> {
   }
 
   Future<void> handleFileExportList() async {
-    debugPrint('Exporting list of ${codesSelected.length} codes');
-
     var password = await showPasswordDialog(context, 'mfa.export.password_popup_confirm');
 
     if (password == null || password.isEmpty) {
@@ -88,8 +86,6 @@ class MfaExportTabState extends State<MfaExportTab> {
     }
 
     var content = generatePlainExportContent().toString();
-
-    debugPrint(content);
 
     _mfaRepo.encryptExportFile(password, content);
     try {
@@ -102,8 +98,6 @@ class MfaExportTabState extends State<MfaExportTab> {
       return;
     }
 
-    debugPrint(content);
-
     var buffer = StringBuffer(content);
 
     switch (Platform.operatingSystem) {
@@ -114,8 +108,6 @@ class MfaExportTabState extends State<MfaExportTab> {
       default:
         await filePickerShareFile(buffer);
     }
-
-    debugPrint('Exporting ${codesSelected.length} codes');
   }
 
   void goToGoogleAuthCode() {
@@ -146,7 +138,6 @@ class MfaExportTabState extends State<MfaExportTab> {
     final filePath = '${directory.path}/mfa_export-$currentDate.txt';
     final file = await File(filePath).writeAsString(content);
     if (await file.exists()) {
-      debugPrint('Prepared for sharing: $filePath');
       final shareParams = ShareParams(
         files: [XFile(filePath)],
       );
@@ -168,12 +159,6 @@ class MfaExportTabState extends State<MfaExportTab> {
       allowedExtensions: ['txt'],
       bytes: contentBytes,
     );
-
-    if (path != null) {
-      debugPrint('File saved to: $path');
-    } else {
-      debugPrint('User canceled save');
-    }
   }
 
   // No separate URL list is needed: each stored entry contains its URL.

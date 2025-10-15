@@ -60,7 +60,6 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
       final event =
           await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
       setState(() {
-        debugPrint('Received URLs: ${event.urls}');
         googleMigrationUrl = (event.urls!.isNotEmpty ? event.urls?.first : '')!;
         // Handle the received URLs or data here
         // For example, you might want to store them in a list

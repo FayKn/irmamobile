@@ -68,23 +68,23 @@ Map<String, dynamic> _$RemoveTOTPSecretEventToJson(RemoveTOTPSecretEvent instanc
 
 EncryptExportFileSendEvent _$EncryptExportFileSendEventFromJson(Map<String, dynamic> json) =>
     EncryptExportFileSendEvent(
-      encryptedFile: json['EncryptedFile'] as String,
+      encryptedFile: json['FileContent'] as String,
       password: json['Password'] as String,
     );
 
 Map<String, dynamic> _$EncryptExportFileSendEventToJson(EncryptExportFileSendEvent instance) => <String, dynamic>{
-      'EncryptedFile': instance.encryptedFile,
+      'FileContent': instance.encryptedFile,
       'Password': instance.password,
     };
 
 DecryptExportFileSendEvent _$DecryptExportFileSendEventFromJson(Map<String, dynamic> json) =>
     DecryptExportFileSendEvent(
-      encryptedFile: json['EncryptedFile'] as String,
+      encryptedFile: json['FileContent'] as String,
       password: json['Password'] as String,
     );
 
 Map<String, dynamic> _$DecryptExportFileSendEventToJson(DecryptExportFileSendEvent instance) => <String, dynamic>{
-      'EncryptedFile': instance.encryptedFile,
+      'FileContent': instance.encryptedFile,
       'Password': instance.password,
     };
 

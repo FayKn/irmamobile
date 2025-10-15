@@ -91,17 +91,21 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
 
           var fileStr = await file.readAsString();
 
-          debugPrint('Importing codes from file');
-          debugPrint(fileStr);
-
           _mfaRepo.decryptExportFile(password, fileStr);
 
           try {
             // Wait for the event with the codes
-            final event = await _irmaRepo.getEvents().whereType<EncryptExportFileReceiveEvent>().first.timeout(Duration(seconds: 2));
+            final event = await _irmaRepo
+                .getEvents()
+                .whereType<EncryptExportFileReceiveEvent>()
+                .first
+                .timeout(Duration(seconds: 2));
             if (event.content.isNotEmpty) {
-              debugPrint('Importing codes from file');
-              debugPrint(event.content);
+              var codes = fileToStoredList(event.content);
+              for (var code in codes) {
+                _mfaRepo.storeTOTP(code);
+              }
+              Navigator.of(context).pop();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
             }

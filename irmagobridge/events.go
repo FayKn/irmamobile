@@ -266,8 +266,8 @@ type RemoveTOTPSecretEvent struct {
 }
 
 type EncryptExportFileSendEvent struct {
-	Password    string
 	FileContent string
+	Password    string
 }
 
 type EncryptExportFileReceiveEvent struct {
