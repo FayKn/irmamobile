@@ -73,6 +73,18 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
     if (timerPaused) return;
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (timerPaused) {
+        return;
+      }
+
+      // get the amount of codes, if 0 then pause the timer to avoid unnecessary updates
+      final itemsAsync = ref.read(mfaOrderControllerProvider);
+      final codes = itemsAsync.value;
+      if (codes == null || codes.isEmpty) {
+        timerPaused = true;
+        _ticker?.cancel();
+        return;
+      }
       _mfaRepo.getAllTOTP();
     });
   }
@@ -107,6 +119,7 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
         leading: null,
         actions: [
           IrmaIconButton(
+            key: const Key('add_mfa_manual_button'),
             icon: CupertinoIcons.add_circled_solid,
             size: 28,
             onTap: addManualCode,
@@ -114,7 +127,7 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
         ],
       ),
       body: itemsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const SizedBox(height: 0, width: 0),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (codes) {
           timerPaused = codes.isEmpty;

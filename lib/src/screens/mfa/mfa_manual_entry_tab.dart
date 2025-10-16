@@ -142,18 +142,21 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TotpManualTextInput(
+                      key: Key('mfa_manual_issuer_input'),
                       controller: _issuerCtrl,
                       translationKey: 'mfa.manual.issuer',
                       inputKey: 'issuer',
                     ),
                     SizedBox(height: theme.defaultSpacing * 2),
                     TotpManualTextInput(
+                      key: Key('mfa_manual_secret_input'),
                       controller: _secretCtrl,
                       translationKey: 'mfa.manual.secret',
                       inputKey: 'secret',
                     ),
                     SizedBox(height: theme.defaultSpacing * 2),
                     TotpManualTextInput(
+                      key: Key('mfa_manual_account_input'),
                       controller: _userNameCtrl,
                       translationKey: 'mfa.manual.account',
                       inputKey: 'account',
