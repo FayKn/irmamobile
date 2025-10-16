@@ -83,7 +83,7 @@ Nu1bRk5gLEwmR5+V6MSFQWyWBkwacOt8
 
     // Enable developer mode before initializing repository, such that we can use a local keyshare server.
     _bridge.dispatch(
-        ClientPreferencesEvent(clientPreferences: ClientPreferences(developerMode: true, experimentalFeatures: false)));
+        ClientPreferencesEvent(clientPreferences: ClientPreferences(developerMode: true, experimentalFeatures: true)));
 
     // Enable screenshots to make sure screen recordings can be made.
     await _preferences!.setScreenshotsEnabled(true);

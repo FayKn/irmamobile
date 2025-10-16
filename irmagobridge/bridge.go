@@ -162,12 +162,10 @@ func Start(givenBridge IrmaMobileBridge, appDataPath string, assetsPath string, 
 		return
 	}
 
-	if client.GetPreferences().ExperimentalFeatures {
-		mfaClient, err = TwoFa.New(appVersionDataPath, aesKeyCopy)
-		if err != nil {
-			clientErr = errors.WrapPrefix(err, "Cannot initialize 2FA client", 0)
-			return
-		}
+	mfaClient, err = TwoFa.New(appVersionDataPath, aesKeyCopy)
+	if err != nil {
+		clientErr = errors.WrapPrefix(err, "Cannot initialize 2FA client", 0)
+		return
 	}
 
 	if !client.GetPreferences().DeveloperMode {
