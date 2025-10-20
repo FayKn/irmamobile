@@ -162,10 +162,14 @@ func Start(givenBridge IrmaMobileBridge, appDataPath string, assetsPath string, 
 		return
 	}
 
-	mfaClient, err = TwoFa.New(appVersionDataPath, aesKeyCopy)
-	if err != nil {
-		clientErr = errors.WrapPrefix(err, "Cannot initialize 2FA client", 0)
-		return
+	mfaClient = TwoFa.New(appVersionDataPath, aesKeyCopy)
+
+	if client.GetPreferences().ExperimentalFeatures {
+		bridge.DebugLog("2FA enabled")
+		mfaClient, err = mfaClient.OpenStorage()
+		if err != nil {
+			clientErr = errors.WrapPrefix(err, "Cannot initialize 2FA client", 0)
+		}
 	}
 
 	if !client.GetPreferences().DeveloperMode {
@@ -195,6 +199,16 @@ func Stop() {
 			clientErr = errors.WrapPrefix(err, "Cannot close client", 0)
 			return
 		}
+	}
+
+	if mfaClient != nil {
+		if mfaClient.MFASecretStorage != nil {
+			if err := mfaClient.Close(); err != nil {
+				clientErr = errors.WrapPrefix(err, "Cannot close 2FA storage", 0)
+			}
+		}
+		mfaClient = nil
+		return
 	}
 
 	client = nil

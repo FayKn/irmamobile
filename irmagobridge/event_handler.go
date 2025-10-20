@@ -222,6 +222,14 @@ func (ah *eventHandler) loadLogs(action *loadLogsEvent) error {
 
 func (ah *eventHandler) setPreferences(event *clientPreferencesEvent) error {
 	client.SetPreferences(event.Preferences)
+	// Initialize MFA storage if experimental features are enabled
+	if event.Preferences.ExperimentalFeatures {
+		lc, err := mfaClient.OpenStorage()
+		if err != nil {
+			return err
+		}
+		mfaClient = lc
+	}
 	return nil
 }
 
