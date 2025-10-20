@@ -301,12 +301,12 @@ class IrmaRepository {
 
   void setDeveloperMode(bool enabled) {
     bridgedDispatch(ClientPreferencesEvent(
-        clientPreferences: ClientPreferences(developerMode: enabled, experimentalFeatures: enabled)));
+        clientPreferences: ClientPreferences(developerMode: enabled, experimentalFeatures: false)));
   }
 
   void setExperimentalFeatures(bool enabled) {
     bridgedDispatch(ClientPreferencesEvent(
-        clientPreferences: ClientPreferences(developerMode: enabled, experimentalFeatures: enabled)));
+        clientPreferences: ClientPreferences(developerMode: true, experimentalFeatures: enabled)));
   }
 
   Future<AuthenticationEvent> unlock(String pin) {
