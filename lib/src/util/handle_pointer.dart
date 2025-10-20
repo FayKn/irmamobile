@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/mfa_repository.dart';
 import '../models/issue_wizard.dart';
 import '../models/session.dart';
 import '../models/session_events.dart';
 import '../providers/irma_repository_provider.dart';
+import '../screens/home/home_screen.dart';
+import '../screens/home/widgets/irma_nav_bar.dart';
 import 'navigation.dart';
 
 /// First handles the issue wizard if one is present, and subsequently the session is handled.
@@ -114,5 +117,10 @@ _saveMFAndNavigate(BuildContext context, MFAPointer mfaPointer, bool pushReplace
   if (!context.mounted) {
     return;
   }
-  context.goMFAScreen();
+
+  // Change to the MFA tab
+  context.read<HomeTabState>().add(IrmaNavBarTab.mfa);
+
+  // Pop the current screen
+  Navigator.of(context).pop();
 }
