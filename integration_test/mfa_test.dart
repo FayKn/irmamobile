@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:irmamobile/src/models/session.dart';
+import 'package:irmamobile/src/screens/mfa/mfa_tab.dart';
 import 'package:irmamobile/src/screens/scanner/scanner_screen.dart';
 import 'package:irmamobile/src/widgets/yivi_themed_button.dart';
-import 'package:irmamobile/src/screens/mfa/mfa_tab.dart';
 
 import 'helpers/helpers.dart';
 import 'irma_binding.dart';
-import 'qr_on_pin_screen_test.dart';
 import 'util.dart';
 
 main() {
@@ -29,6 +28,12 @@ main() {
     await tester.tapAndSettle(find.byKey(const Key('nav_button_more')));
   }
 
+  Future<void> pauseMfaTimer(WidgetTester tester) async {
+    final MfaTabState mfaState = tester.state(find.byType(MfaTab));
+    mfaState.timerPaused = true;
+    await tester.pumpAndSettle();
+  }
+
   group('mfa', () {
     setUp(() => irmaBinding.setUp(experimentalFeatures: true));
     tearDown(() => irmaBinding.tearDown());
@@ -38,26 +43,20 @@ main() {
       await tester.tapAndSettle(find.byKey(const Key('nav_button_scanner')));
       // pretend to scan MFA QR code by creating a pointer directly and running the handler
       Pointer pointer = MFAPointer(
-        inputUrl: 'otpauth://totp/TestIssuer:TestUser?issuer=TestIssuer&secret=LMSCQYMSVVQYSIUM&algorithm=SHA1&digits=6&period=30',
+        inputUrl:
+            'otpauth://totp/TestIssuer:TestUser?issuer=TestIssuer&secret=LMSCQYMSVVQYSIUM&algorithm=SHA1&digits=6&period=30',
       );
 
       final ScannerScreenState scannerState = tester.state(find.byType(ScannerScreen));
       scannerState.onQrScanned(pointer);
       await tester.pump(); // Pump once to process the scan
 
-      // Navigate to MFA tab to verify the added item
-      await tester.tap(find.byKey(const Key('nav_button_mfa')));
-      await tester.pump();
-      // Pause the timer to prevent hanging on pumpAndSettle
-      final MfaTabState mfaState = tester.state(find.byType(MfaTab));
-      mfaState.timerPaused = true;
-      await tester.pumpAndSettle();
+      await pauseMfaTimer(tester);
 
       // verify item is added, the correctness of data is tested in unit tests within Go
       expect(find.text('TestIssuer'), findsOneWidget);
       expect(find.text('TestUser'), findsOneWidget);
     });
-
 
     testWidgets('add mfa item manually', (WidgetTester tester) async {
       await initAndNavToMfaScreen(tester);
@@ -77,12 +76,15 @@ main() {
         matching: find.byType(YiviThemedButton),
       );
       expect(
-        tester
-            .widget<YiviThemedButton>(saveButtonFinder)
-            .onPressed,
+        tester.widget<YiviThemedButton>(saveButtonFinder).onPressed,
         isNotNull,
       );
-      await tester.tapAndSettle(find.byKey(const Key('bottom_bar_primary')));
+      // don't settle or the test will hang because of the timer
+      await tester.tap(find.byKey(const Key('bottom_bar_primary')));
+
+      await tester.pump(const Duration(seconds: 1));
+      await pauseMfaTimer(tester);
+
       // verify item is added, the correctness of data is tested in unit tests within Go
       expect(find.text('TestIssuer'), findsOneWidget);
       expect(find.text('TestUser'), findsOneWidget);

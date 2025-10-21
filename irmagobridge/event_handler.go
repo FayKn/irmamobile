@@ -152,6 +152,12 @@ func (ah *eventHandler) clearAllData() (err error) {
 		return err
 	}
 
+	if mfaClient.MFASecretStorage != nil {
+		if err := mfaClient.MFASecretStorage.ClearStorage(); err != nil {
+			return err
+		}
+	}
+
 	dispatchCredentialsEvent()
 	dispatchEnrollmentStatusEvent()
 	return nil

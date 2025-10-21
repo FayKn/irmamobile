@@ -73,6 +73,10 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
     if (timerPaused) return;
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) {
+        _ticker?.cancel();
+        return;
+      }
       if (timerPaused) {
         return;
       }
