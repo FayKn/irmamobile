@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:irmamobile/src/data/mfa_repository.dart';
+import 'package:irmamobile/src/models/mfa_events.dart';
 import 'package:irmamobile/src/models/session.dart';
 import 'package:irmamobile/src/screens/mfa/mfa_tab.dart';
+import 'package:irmamobile/src/screens/mfa/widgets/code_export_card.dart';
 import 'package:irmamobile/src/screens/scanner/scanner_screen.dart';
 import 'package:irmamobile/src/widgets/yivi_themed_button.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'helpers/helpers.dart';
 import 'irma_binding.dart';
+import 'qr_on_pin_screen_test.dart';
 import 'util.dart';
 
 main() {
@@ -88,6 +93,38 @@ main() {
       // verify item is added, the correctness of data is tested in unit tests within Go
       expect(find.text('TestIssuer'), findsOneWidget);
       expect(find.text('TestUser'), findsOneWidget);
+    });
+
+    testWidgets('Export code via Google QR', (WidgetTester tester) async {
+      await initAndNavToMoreScreen(tester);
+
+      var mfaRepo = MfaRepository(irmaRepository: irmaBinding.repository);
+      final code = TOTPStored(secret: 'JBSWY3DPEHPK3PXP',
+          issuer: 'TestIssuer',
+          userAccount: 'TestUser',
+          period: 30,
+          algorithm: 'SHA1');
+      mfaRepo.storeTOTP(code);
+
+      // wait a second so the code is actually stored
+      await tester.pump(const Duration(seconds: 1));
+
+      await tester.tapAndSettle(find.byKey(const Key('mfa_export_list_tile')));
+
+      // verify item is added, the correctness of data is tested in unit tests within Go
+      expect(find.text('TestIssuer'), findsOneWidget);
+      expect(find.text('TestUser'), findsOneWidget);
+
+      // tap and hold the first CodeExportcard to select it
+      final codeCardFinder = find.byType(CodeExportcard).first;
+      await tester.longPress(codeCardFinder);
+      await tester.pumpAndSettle();
+
+      // tap the export button
+      await tester.tapAndSettle(find.byKey(const Key('bottom_bar_primary')));
+
+      // expect to be on the Google export tab with a QR code
+      expect(find.byType(QrImageView), findsOneWidget);
     });
   });
 }

@@ -105,6 +105,7 @@ class _MoreTabState extends State<MoreTab> {
                     onTap: context.goDebugScreen,
                   ),
                 InternalLinkTile(
+                  key: Key('mfa_export_list_tile'),
                   labelTranslationKey: 'more_tab.mfa_export',
                   iconData: Icons.compare_arrows_outlined,
                   onTap: context.goMFAExportScreen,
