@@ -61,11 +61,14 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
   Timer? _debounce;
   List<String> _order = const []; // persisted order of IDs
   final NewItemPolicy _policy = NewItemPolicy.prepend;
+  OrderRepo? _orderRepo;
 
   @override
   Future<List<TOTPcode>> build() async {
+    _orderRepo = ref.read(mfaOrderRepoProvider);
+
     // Load persisted order once
-    _order = await ref.read(mfaOrderRepoProvider).loadOrder();
+    _order = await _orderRepo!.loadOrder();
 
     // Listen to external source and reconcile on each update
     ref.listen<AsyncValue<List<TOTPcode>>>(
@@ -87,6 +90,12 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
       },
     );
 
+    // Ensure timer is cancelled if this provider is disposed
+    ref.onDispose(() {
+      _debounce?.cancel();
+      _orderRepo = null;
+    });
+
     // Seed with current external value (if available)
     final ext = await ref.read(mfaCodesProvider.future);
     final merged = _reconcile(ext, _order, _policy);
@@ -105,9 +114,6 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
     _debouncedSave(current);
   }
 
-  /// Merge logic:
-  /// - keep IDs in stored order if they still exist
-  /// - add any new external IDs at end/start (policy)
   List<TOTPcode> _reconcile(
     List<TOTPcode> external,
     List<String> storedOrder,
@@ -139,14 +145,15 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
     _debounce = Timer(
       const Duration(milliseconds: 400),
       () async {
-        await ref.read(mfaOrderRepoProvider).saveOrder(
-              items.map(_codeKey).toList(),
-            );
+        // Use captured repo instance instead of ref.read to avoid reading providers after dispose
+        try {
+          await _orderRepo?.saveOrder(
+            items.map(_codeKey).toList(),
+          );
+        } catch (_) {
+          // ignore errors if repo is no longer available
+        }
       },
     );
-  }
-
-  void dispose() {
-    _debounce?.cancel();
   }
 }

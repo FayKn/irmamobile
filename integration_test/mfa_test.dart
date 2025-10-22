@@ -54,8 +54,8 @@ main() {
 
       final ScannerScreenState scannerState = tester.state(find.byType(ScannerScreen));
       scannerState.onQrScanned(pointer);
-      await tester.pump(); // Pump once to process the scan
 
+      await tester.pumpAndSettle();
       await pauseMfaTimer(tester);
 
       // verify item is added, the correctness of data is tested in unit tests within Go
@@ -121,7 +121,7 @@ main() {
       await tester.pumpAndSettle();
 
       // tap the export button
-      await tester.tapAndSettle(find.byKey(const Key('bottom_bar_primary')));
+      await tester.tapAndSettle(find.byKey(const Key('bottom_bar_secondary')));
 
       // expect to be on the Google export tab with a QR code
       expect(find.byType(QrImageView), findsOneWidget);

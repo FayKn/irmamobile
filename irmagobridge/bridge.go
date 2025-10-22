@@ -172,7 +172,7 @@ func Start(givenBridge IrmaMobileBridge, appDataPath string, assetsPath string, 
 		}
 	}
 
-	if !client.GetPreferences().DeveloperMode {
+	if client.GetPreferences().DeveloperMode {
 		irma.Logger.SetLevel(logrus.ErrorLevel)
 	}
 
