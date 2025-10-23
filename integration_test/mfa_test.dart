@@ -99,11 +99,8 @@ main() {
       await initAndNavToMoreScreen(tester);
 
       var mfaRepo = MfaRepository(irmaRepository: irmaBinding.repository);
-      final code = TOTPStored(secret: 'JBSWY3DPEHPK3PXP',
-          issuer: 'TestIssuer',
-          userAccount: 'TestUser',
-          period: 30,
-          algorithm: 'SHA1');
+      final code = TOTPStored(
+          secret: 'JBSWY3DPEHPK3PXP', issuer: 'TestIssuer', userAccount: 'TestUser', period: 30, algorithm: 'SHA1');
       mfaRepo.storeTOTP(code);
 
       // wait a second so the code is actually stored

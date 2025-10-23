@@ -46,7 +46,9 @@ Nu1bRk5gLEwmR5+V6MSFQWyWBkwacOt8
   }
 
   Future<void> setUp(
-      {EnrollmentStatus enrollmentStatus = EnrollmentStatus.enrolled, bool acceptedTermsAndConditions = true, bool experimentalFeatures = false}) async {
+      {EnrollmentStatus enrollmentStatus = EnrollmentStatus.enrolled,
+      bool acceptedTermsAndConditions = true,
+      bool experimentalFeatures = false}) async {
     assert(enrollmentStatus != EnrollmentStatus.undetermined);
     _preferences ??= await IrmaPreferences.fromInstance(
       mostRecentTermsUrlNl: 'testurl',
@@ -82,8 +84,8 @@ Nu1bRk5gLEwmR5+V6MSFQWyWBkwacOt8
     }
 
     // Enable developer mode before initializing repository, such that we can use a local keyshare server.
-    _bridge.dispatch(
-        ClientPreferencesEvent(clientPreferences: ClientPreferences(developerMode: true, experimentalFeatures: experimentalFeatures)));
+    _bridge.dispatch(ClientPreferencesEvent(
+        clientPreferences: ClientPreferences(developerMode: true, experimentalFeatures: experimentalFeatures)));
 
     // Enable screenshots to make sure screen recordings can be made.
     await _preferences!.setScreenshotsEnabled(true);

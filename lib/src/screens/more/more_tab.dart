@@ -52,6 +52,7 @@ class _MoreTabState extends State<MoreTab> {
   @override
   void dispose() {
     _devModeSubscription?.cancel();
+    _experimentalSubscription?.cancel();
     super.dispose();
   }
 
@@ -113,12 +114,12 @@ class _MoreTabState extends State<MoreTab> {
                     onTap: context.goDebugScreen,
                   ),
                 if (showExperimental)
-                InternalLinkTile(
-                  key: Key('mfa_export_list_tile'),
-                  labelTranslationKey: 'more_tab.mfa_export',
-                  iconData: Icons.compare_arrows_outlined,
-                  onTap: context.goMFAExportScreen,
-                ),
+                  InternalLinkTile(
+                    key: Key('mfa_export_list_tile'),
+                    labelTranslationKey: 'more_tab.mfa_export',
+                    iconData: Icons.compare_arrows_outlined,
+                    onTap: context.goMFAExportScreen,
+                  ),
               ],
             ),
             spacerWidget,

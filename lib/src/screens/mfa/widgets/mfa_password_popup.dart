@@ -65,15 +65,15 @@ List<TOTPStored> fileToStoredList(String fileContent) {
       continue; // Skip empty lines and comments
     }
 
-    if (line.startsWith('Issuer: ')){
+    if (line.startsWith('Issuer: ')) {
       interimList['issuer'] = line.substring(8).trim();
-    } else if (line.startsWith('Account: ')){
+    } else if (line.startsWith('Account: ')) {
       interimList['user'] = line.substring(9).trim();
-    } else if (line.startsWith('Secret: ')){
+    } else if (line.startsWith('Secret: ')) {
       interimList['secret'] = line.substring(8).trim();
-    } else if (line.startsWith('Period: ')){
+    } else if (line.startsWith('Period: ')) {
       interimList['period'] = line.substring(8).trim();
-    } else if (line.startsWith('Algorithm: ')){
+    } else if (line.startsWith('Algorithm: ')) {
       interimList['algorithm'] = line.substring(11).trim();
     }
   }
