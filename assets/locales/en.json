@@ -633,6 +633,11 @@
   },
   "mfa": {
     "nextCode": "Next code: {code}",
+    "delete": {
+      "title": "Delete 2FA code?",
+      "confirm": "Delete",
+      "decline": "Cancel"
+    },
     "export_as_file": "Export as file",
     "export_as_google": "Export to Google Authenticator",
     "export": {

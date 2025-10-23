@@ -633,6 +633,11 @@
   },
   "mfa": {
     "nextCode": "Volgende code: {code}",
+    "delete": {
+      "title": "Weet u zeker dat u deze code wilt verwijderen?",
+      "confirm": "Verwijderen",
+      "decline": "Annuleren"
+    },
     "export": {
       "password_popup_title": "Voer het wachtwoord in voor de export",
       "password_popup_hint": "Wachtwoord",
