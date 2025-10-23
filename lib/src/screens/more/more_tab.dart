@@ -25,7 +25,9 @@ class MoreTab extends StatefulWidget {
 
 class _MoreTabState extends State<MoreTab> {
   StreamSubscription? _devModeSubscription;
+  StreamSubscription? _experimentalSubscription;
   bool showDebugging = false;
+  bool showExperimental = false;
 
   @override
   void initState() {
@@ -36,6 +38,12 @@ class _MoreTabState extends State<MoreTab> {
       _devModeSubscription = repo.getDeveloperMode().listen((event) {
         setState(() {
           showDebugging = event;
+        });
+      });
+
+      _experimentalSubscription = repo.getExperimentalFeatures().listen((event) {
+        setState(() {
+          showExperimental = event;
         });
       });
     });
@@ -104,6 +112,7 @@ class _MoreTabState extends State<MoreTab> {
                     iconData: Icons.code_rounded,
                     onTap: context.goDebugScreen,
                   ),
+                if (showExperimental)
                 InternalLinkTile(
                   key: Key('mfa_export_list_tile'),
                   labelTranslationKey: 'more_tab.mfa_export',
