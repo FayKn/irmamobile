@@ -6,13 +6,14 @@ import 'package:irmamobile/src/models/mfa_events.dart';
 import 'package:irmamobile/src/models/session.dart';
 import 'package:irmamobile/src/screens/mfa/mfa_tab.dart';
 import 'package:irmamobile/src/screens/mfa/widgets/code_export_card.dart';
+import 'package:irmamobile/src/screens/mfa/widgets/delete_button.dart';
+import 'package:irmamobile/src/screens/mfa/widgets/totp_card.dart';
 import 'package:irmamobile/src/screens/scanner/scanner_screen.dart';
 import 'package:irmamobile/src/widgets/yivi_themed_button.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'helpers/helpers.dart';
 import 'irma_binding.dart';
-import 'qr_on_pin_screen_test.dart';
 import 'util.dart';
 
 main() {
@@ -122,6 +123,44 @@ main() {
 
       // expect to be on the Google export tab with a QR code
       expect(find.byType(QrImageView), findsOneWidget);
+    });
+
+    testWidgets('delete MFA code', (WidgetTester tester) async {
+      await pumpAndUnlockApp(tester, irmaBinding.repository);
+
+      var mfaRepo = MfaRepository(irmaRepository: irmaBinding.repository);
+      final code = TOTPStored(
+          secret: 'JBSWY3DPEHPK3PXP', issuer: 'TestIssuer', userAccount: 'TestUser', period: 30, algorithm: 'SHA1');
+      mfaRepo.storeTOTP(code);
+
+      // wait a second so the code is actually stored
+      await tester.pump(const Duration(seconds: 1));
+
+      await tester.tap(find.byKey(const Key('nav_button_mfa')));
+
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // verify item is added
+      expect(find.text('TestIssuer'), findsOneWidget);
+      // swipe left to reveal delete button
+      final codeCardFinder = find.byType(TotpCard).first;
+      await tester.drag(find.byType(TotpCard), const Offset(-100.0, 0.0));
+      await tester.pump(const Duration(milliseconds: 400));
+
+      // tap delete button
+      final deleteButtonFinder = find.descendant(
+        of: codeCardFinder,
+        matching: find.byType(DeleteButton),
+      );
+      await tester.tap(deleteButtonFinder);
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // confirm deletion
+      await tester.tap(find.text('Delete'));
+      await tester.pump(const Duration(seconds: 2));
+
+      // verify item is deleted
+      expect(find.text('TestIssuer'), findsNothing);
     });
   });
 }
