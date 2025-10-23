@@ -65,82 +65,79 @@ class TotpCard extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: theme.borderRadius,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Timer bar
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 1000),
-                curve: Curves.linear,
-                color: theme.primary,
-                alignment: Alignment.topLeft,
-                width: containerWidth - (timerProgress / period) * containerWidth,
-                height: 5,
-              ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Timer bar
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.linear,
+              color: theme.primary,
+              alignment: Alignment.topLeft,
+              width: containerWidth - (timerProgress / period) * containerWidth,
+              height: 5,
+            ),
 
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: theme.defaultSpacing,
-                  vertical: theme.smallSpacing,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  spacing: theme.defaultSpacing,
-                  children: [
-                    Row(
-                      spacing: theme.defaultSpacing,
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: theme.defaultSpacing,
+                vertical: theme.smallSpacing,
+              ),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Row(spacing: theme.defaultSpacing, children: [
+                      SimpleIcon(iconName: serviceName),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(
+                            serviceName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          Text(
+                            userName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                              color: theme.neutralExtraDark,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ]),
+                      ),
+                    ]),
+                  ),
+                  Row(spacing: theme.smallSpacing, children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SimpleIcon(iconName: serviceName),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              serviceName,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              userName,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
-                                color: theme.neutralExtraDark,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          stringCurrentCode,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TranslatedText(
+                          'mfa.nextCode',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 10,
+                            color: theme.neutralExtraDark,
+                          ),
+                          translationParams: {'code': stringNextCode},
                         ),
                       ],
                     ),
-                    Row(spacing: theme.smallSpacing, children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            stringCurrentCode,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TranslatedText(
-                            'mfa.nextCode',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 10,
-                              color: theme.neutralExtraDark,
-                            ),
-                            translationParams: {'code': stringNextCode},
-                          ),
-                        ],
-                      ),
-                      Icon(Icons.copy, color: theme.neutralExtraDark),
-                    ])
-                  ],
-                ),
+                    Icon(Icons.copy, color: theme.neutralExtraDark),
+                  ]),
+                ],
               ),
-            ],
-          ),
+            ),
+          ]),
         ),
       ),
     );
