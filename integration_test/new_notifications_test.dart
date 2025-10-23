@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:irmamobile/src/screens/data/credentials_details_screen.dart';
+import 'package:irmamobile/src/screens/logging/widgets/activity_icon.dart';
 import 'package:irmamobile/src/screens/notifications/notifications_tab.dart';
-import 'package:irmamobile/src/screens/notifications/widgets/notification_bell.dart';
 import 'package:irmamobile/src/screens/notifications/widgets/notification_card.dart';
 import 'package:irmamobile/src/widgets/credential_card/yivi_credential_card.dart';
-import 'package:irmamobile/src/widgets/irma_app_bar.dart';
 import 'package:irmamobile/src/widgets/yivi_themed_button.dart';
 
 import 'helpers/helpers.dart';
@@ -24,6 +23,12 @@ void main() {
     setUp(() => irmaBinding.setUp(experimentalFeatures: true));
     tearDown(() => irmaBinding.tearDown());
 
+    // Reusable finders
+    final notificationsScreenFinder = find.byType(NotificationsTab);
+
+    final activityIconFinder = find.byType(ActivityIcon);
+    final notificationCardFinder = find.byType(NotificationCard);
+
     Future<void> navtoNotificationsTab(WidgetTester tester) async {
       // Switch to notifications tab
       final tabBarFinder = find.byType(TabBar);
@@ -40,13 +45,10 @@ void main() {
     Future<void> initAndNavToNotificationTab(WidgetTester tester) async {
       await pumpAndUnlockApp(tester, irmaBinding.repository);
 
-      await tester.tapAndSettle(find.byKey(const Key('nav_button_logging')));
+      await tester.tapAndSettle(activityIconFinder);
 
       await navtoNotificationsTab(tester);
     }
-
-    // Reusable finders
-    final notificationsScreenFinder = find.byType(NotificationsTab);
 
     // Mocked notification cache
     const mockedCredentialCache =
@@ -109,8 +111,6 @@ void main() {
       await irmaBinding.repository.preferences.setSerializedNotifications(twoMockedCredentialsCache);
       await initAndNavToNotificationTab(tester);
 
-      // Expect one NotificationCard
-      final notificationCardFinder = find.byType(NotificationCard);
       expect(notificationCardFinder, findsExactly(2));
 
       // Evaluate the NotificationCard
@@ -122,24 +122,19 @@ void main() {
       );
     });
 
-    // TODO: add the little notification indicator, then re-enable this test
-/*    testWidgets('read-all-notifications', (tester) async {
+    testWidgets('read-all-notifications', (tester) async {
       await irmaBinding.repository.preferences.setSerializedNotifications(mockedCredentialCache);
       await pumpAndUnlockApp(tester, irmaBinding.repository);
 
-      // Expect the NotificationBell to be visible
-      expect(notificationBellFinder, findsOneWidget);
-
       // Notification bell should show the indicator
-      final notificationBell = tester.widget<NotificationBell>(notificationBellFinder);
-      expect(notificationBell.showIndicator, true);
+      final icon = tester.widget<ActivityIcon>(activityIconFinder);
+      expect(icon.showIndicator, true);
 
       // Press the NotificationBell and expect the NotificationsScreen to appear
-      await tester.tapAndSettle(notificationBellFinder);
+      await tester.tapAndSettle(activityIconFinder);
+      await navtoNotificationsTab(tester);
       expect(notificationsScreenFinder, findsOneWidget);
 
-      // Expect one NotificationCard
-      final notificationCardFinder = find.byType(NotificationCard);
       expect(notificationCardFinder, findsOneWidget);
 
       // Evaluate the NotificationCard
@@ -158,11 +153,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // NotificationBell now should not show the indicator
-      final notificationBell2 = tester.widget<NotificationBell>(notificationBellFinder);
+      final notificationBell2 = tester.widget<ActivityIcon>(activityIconFinder);
       expect(notificationBell2.showIndicator, false);
 
       // Press the NotificationBell and expect the NotificationsScreen to appear
-      await tester.tapAndSettle(notificationBellFinder);
+      await tester.tapAndSettle(activityIconFinder);
+      await navtoNotificationsTab(tester);
       expect(notificationsScreenFinder, findsOneWidget);
 
       // Expect one NotificationCard
@@ -177,12 +173,12 @@ void main() {
         content: 'Demo IRMATube has revoked this data: Demo IRMATube Member',
         read: true,
       );
-    });*/
+    });
+
     testWidgets('dismiss-notification', (tester) async {
       await irmaBinding.repository.preferences.setSerializedNotifications(mockedCredentialCache);
       await initAndNavToNotificationTab(tester);
 
-      final notificationCardFinder = find.byType(NotificationCard);
       expect(notificationCardFinder, findsOneWidget);
 
       await tester.drag(notificationCardFinder, const Offset(-500, 0));
@@ -196,6 +192,7 @@ void main() {
       // Go back
       await tester.tapAndSettle(find.byKey(const Key('nav_button_data')));
 
+      await tester.tapAndSettle(activityIconFinder);
       await navtoNotificationsTab(tester);
 
       // Expect no NotificationCard
@@ -214,12 +211,10 @@ void main() {
         matching: find.text('OK'),
       ));
 
-      await tester.tapAndSettle(find.byKey(const Key('nav_button_logging')));
+      await tester.tapAndSettle(activityIconFinder);
       await navtoNotificationsTab(tester);
       expect(notificationsScreenFinder, findsOneWidget);
 
-      // Evaluate the NotificationCard, it should be unread
-      final notificationCardFinder = find.byType(NotificationCard);
       expect(notificationCardFinder, findsOneWidget);
       await evaluateNotificationCard(
         tester,

@@ -7,6 +7,7 @@ import '../../widgets/translated_text.dart';
 import '../activity/activity_tab.dart';
 import '../notifications/bloc/notifications_bloc.dart';
 import '../notifications/notifications_tab.dart';
+import '../notifications/widgets/notification_indicator.dart';
 
 class LoggingTab extends StatefulWidget {
   @override
@@ -32,10 +33,10 @@ class _LoggingTabState extends State<LoggingTab> {
             ),
           ),
           elevation: 0,
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
               Tab(child: TranslatedText('activity.tab_bar.transactions')),
-              Tab(child: TranslatedText('activity.tab_bar.notifications')),
+              Tab(child: _notificationText('activity.tab_bar.notifications')),
             ],
           ),
         ),
@@ -49,6 +50,22 @@ class _LoggingTabState extends State<LoggingTab> {
           ],
         ),
       ),
+    );
+  }
+
+  // widget so the notification text gets an indicator when there are new notifications
+  Widget _notificationText(String translationKey) {
+    return BlocBuilder<NotificationsBloc, NotificationsState>(
+      builder: (context, state) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 4,
+          children: [
+            TranslatedText(translationKey),
+            if (state is NotificationsLoaded ? state.hasUnreadNotifications : false) NotificationIndicator(),
+          ],
+        );
+      },
     );
   }
 }

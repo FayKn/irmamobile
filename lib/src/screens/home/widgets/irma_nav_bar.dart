@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../providers/irma_repository_provider.dart';
 import '../../../theme/theme.dart';
+import '../../logging/widgets/activity_icon.dart';
 import '../../notifications/bloc/notifications_bloc.dart';
 import '../../notifications/widgets/notification_bell.dart';
 import 'irma_nav_button.dart';
@@ -63,28 +64,18 @@ class IrmaNavBar extends StatelessWidget {
               return enabled
                   ? IrmaNavButton(
                       key: const Key('nav_button_logging'),
-                      iconData: Icons.history,
+                      builder: _buildActivityIcon,
                       tab: IrmaNavBarTab.logging,
                       changeTab: onChangeTab,
                       isSelected: IrmaNavBarTab.logging == selectedTab,
                     )
-                  : const SizedBox.shrink();
-            },
-          ),
-          FutureBuilder<bool>(
-            future: repo.getExperimentalFeatures().first,
-            initialData: false,
-            builder: (context, snapshot) {
-              final enabled = snapshot.data ?? false;
-              return enabled
-                  ? const SizedBox.shrink()
                   : IrmaNavButton(
-                      key: const Key('nav_button_activity'),
-                      iconData: Icons.history,
-                      tab: IrmaNavBarTab.activity,
-                      changeTab: onChangeTab,
-                      isSelected: IrmaNavBarTab.activity == selectedTab,
-                    );
+                key: const Key('nav_button_activity'),
+                iconData: Icons.history,
+                tab: IrmaNavBarTab.activity,
+                changeTab: onChangeTab,
+                isSelected: IrmaNavBarTab.activity == selectedTab,
+              );
             },
           ),
           // Spacing for the QR scan button
@@ -143,6 +134,18 @@ class IrmaNavBar extends StatelessWidget {
         color: color,
         showIndicator: state is NotificationsLoaded ? state.hasUnreadNotifications : false,
         onTap: () => onChangeTab(IrmaNavBarTab.notifications),
+        outlined: !active,
+      ),
+    );
+  }
+
+  // add the notification icon indicator here
+  Widget _buildActivityIcon(bool active, Color color) {
+    return BlocBuilder<NotificationsBloc, NotificationsState>(
+      builder: (context, state) => ActivityIcon(
+        color: color,
+        showIndicator: state is NotificationsLoaded ? state.hasUnreadNotifications : false,
+        onTap: () => onChangeTab(IrmaNavBarTab.logging),
         outlined: !active,
       ),
     );
