@@ -96,6 +96,23 @@ void main() {
         }
       ]
     ''';
+    testWidgets('reach', (tester) async {
+      await pumpAndUnlockApp(tester, irmaBinding.repository);
+      await tester.tapAndSettle(activityIconFinder);
+      await navtoNotificationsTab(tester);
+      expect(notificationsScreenFinder, findsOneWidget);
+
+      await tester.tapAndSettle(find.byKey(const Key('nav_button_more')));
+      await tester.tapAndSettle(activityIconFinder);
+      await navtoNotificationsTab(tester);
+      expect(notificationsScreenFinder, findsOneWidget);
+
+      await tester.tapAndSettle(find.byKey(const Key('nav_button_data')));
+      await tester.tapAndSettle(activityIconFinder);
+      await navtoNotificationsTab(tester);
+      expect(notificationsScreenFinder, findsOneWidget);
+    });
+
     testWidgets('empty-state', (tester) async {
       await initAndNavToNotificationTab(tester);
 
