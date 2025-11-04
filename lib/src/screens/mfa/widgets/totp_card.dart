@@ -32,6 +32,7 @@ class TotpCard extends StatefulWidget {
 
 class _TotpCardState extends State<TotpCard> {
   bool _deleteVisible = false;
+  bool _showCopyCheckmark = false;
 
   void _handleTapCopyOrDismiss(String stringCurrentCode) {
     if (_deleteVisible) {
@@ -39,7 +40,15 @@ class _TotpCardState extends State<TotpCard> {
       return;
     }
     Clipboard.setData(ClipboardData(text: stringCurrentCode));
+
+    _showCopyCheckmark = true;
+    setState(() {});
+    Future.delayed(const Duration(seconds: 3), () {
+      _showCopyCheckmark = false;
+      setState(() {});
+    });
   }
+
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     // Reveal on left swipe, hide on right swipe.
     const threshold = 10; // pixels per update
@@ -159,7 +168,9 @@ class _TotpCardState extends State<TotpCard> {
                             ),
                           ],
                         ),
-                        Icon(Icons.copy, color: theme.neutralExtraDark),
+                        _showCopyCheckmark
+                            ? Icon(Icons.check, color: theme.success)
+                            : Icon(Icons.copy, color: theme.neutralExtraDark),
                       ]),
                     ],
                   ),

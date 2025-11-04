@@ -81,43 +81,37 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
     }
   }
 
-  void _handleFileImport() {
-    showPasswordDialog(context, 'mfa.export.password_popup_confirm').then((password) async {
-      if (password != null && password.isNotEmpty) {
-        FilePickerResult? result = await FilePicker.platform.pickFiles();
+  void _handleFileImport() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
 
-        if (result != null) {
-          File file = File(result.files.single.path!);
-
-          var fileStr = await file.readAsString();
-
-          _mfaRepo.decryptExportFile(password, fileStr);
-
-          try {
-            // Wait for the event with the codes
-            final event = await _irmaRepo
-                .getEvents()
-                .whereType<EncryptExportFileReceiveEvent>()
-                .first
-                .timeout(Duration(seconds: 2));
-            if (event.content.isNotEmpty) {
-              var codes = fileToStoredList(event.content);
-              for (var code in codes) {
-                _mfaRepo.storeTOTP(code);
-              }
-              Navigator.of(context).pop();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
-            }
-          } catch (e) {
-            debugPrint('Failed to import codes: $e');
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
-          }
-        }
-
+      var password = await showPasswordDialog(context, 'mfa.export.password_popup_confirm');
+      if (password == null || password.isEmpty) {
         return;
       }
-    });
+
+      var fileStr = await file.readAsString();
+      _mfaRepo.decryptExportFile(password, fileStr);
+
+      try {
+        // Wait for the event with the codes
+        final event =
+            await _irmaRepo.getEvents().whereType<EncryptExportFileReceiveEvent>().first.timeout(Duration(seconds: 2));
+        if (event.content.isNotEmpty) {
+          var codes = fileToStoredList(event.content);
+          for (var code in codes) {
+            _mfaRepo.storeTOTP(code);
+          }
+          Navigator.of(context).pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
+        }
+      } catch (e) {
+        debugPrint('Failed to import codes: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('mfa.import.error')));
+      }
+    }
   }
 
   @override
