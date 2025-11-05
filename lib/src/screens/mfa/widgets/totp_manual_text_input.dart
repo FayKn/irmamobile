@@ -29,7 +29,7 @@ class TotpManualTextInput extends StatelessWidget {
         key: Key(inputKey),
         controller: controller,
         keyboardType: formatter == Formatters.numerical ? TextInputType.number : TextInputType.text,
-        textCapitalization: TextCapitalization.characters,
+        textCapitalization: formatter == Formatters.nospecial ? TextCapitalization.characters : TextCapitalization.none,
         cursorColor: theme.themeData.colorScheme.secondary,
         style: baseTextStyle,
         inputFormatters: [

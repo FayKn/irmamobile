@@ -140,6 +140,7 @@ class _MfaManualEntryTabState extends State<MfaManualEntryTab> {
                       controller: _issuerCtrl,
                       translationKey: 'mfa.manual.issuer',
                       inputKey: 'issuer',
+                      formatter: Formatters.special,
                     ),
                     SizedBox(height: theme.defaultSpacing * 2),
                     TotpManualTextInput(
