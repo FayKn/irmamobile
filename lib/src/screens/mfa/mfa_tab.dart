@@ -63,9 +63,15 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
         period: code.period,
         timerProgress: code.timerProgress);
 
+    // Optimistically remove from local UI immediately
+    try {
+      ref.read(mfaOrderControllerProvider.notifier).removeCode(clone);
+    } catch (_) {}
+
+    // Send removal to the bridge and request an updated list
     _mfaRepo.removeTOTP(clone);
-    // Trigger a refresh
     _mfaRepo.getAllTOTP();
+    // Don't invalidate here; rely on optimistic removal and the bridge's response to reconcile
   }
 
   void _startCodeTimers() {
@@ -81,8 +87,9 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
         return;
       }
 
-      // get the amount of codes, if 0 then pause the timer to avoid unnecessary updates
-      final itemsAsync = ref.read(mfaOrderControllerProvider);
+      // Inspect the raw bridge-sourced codes so we immediately detect a Codes:null payload
+      // and pause the timer even if the ordered controller hasn't reconciled yet.
+      final itemsAsync = ref.read(mfaCodesProvider);
       final codes = itemsAsync.value;
       if (codes == null || codes.isEmpty) {
         timerPaused = true;
@@ -114,6 +121,7 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
     final theme = IrmaTheme.of(context);
 
     final itemsAsync = ref.watch(mfaOrderControllerProvider);
+    final rawCodesAsync = ref.watch(mfaCodesProvider);
     final controller = ref.read(mfaOrderControllerProvider.notifier);
 
     return Scaffold(
@@ -133,9 +141,20 @@ class MfaTabState extends ConsumerState<MfaTab> with RouteAware {
       body: itemsAsync.when(
         loading: () => const SizedBox(height: 0, width: 0),
         error: (e, _) => Center(child: Text('Error: $e')),
+        // ran on every update of the codes list (addition, removal, timer tick)
         data: (codes) {
-          timerPaused = codes.isEmpty;
-          if (timerPaused) {
+          final rawCodes = rawCodesAsync.value;
+          if (rawCodes != null && rawCodes.isEmpty) {
+            timerPaused = true;
+            _ticker?.cancel();
+            return const SizedBox.shrink();
+          }
+
+          if (codes.isEmpty) {
+            timerPaused = true;
+            _ticker?.cancel();
+          } else {
+            timerPaused = false;
             _startCodeTimers();
           }
           return ReorderableListView.builder(

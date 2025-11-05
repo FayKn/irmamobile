@@ -45,8 +45,10 @@ final mfaCodesProvider = StreamProvider<List<TOTPcode>>((ref) async* {
   final repo = ref.watch(irmaRepositoryProvider);
 
   await for (final event in repo.getEvents()) {
-    if (event is GetAllTOTPSecretsEvent && event.codes != null) {
-      yield event.codes!;
+    if (event is GetAllTOTPSecretsEvent) {
+      // Treat a null Codes payload as an explicit empty list coming from the bridge.
+      // This ensures the UI and timers update when the native side responds with no codes.
+      yield event.codes ?? <TOTPcode>[];
     }
   }
 });
@@ -76,6 +78,13 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
       (prev, next) async {
         final items = next.valueOrNull;
         if (items == null) {
+          return;
+        }
+        // If external reports zero items, clear persisted order and update immediately
+        if (items.isEmpty) {
+          state = AsyncData(<TOTPcode>[]);
+          _debouncedSave(<TOTPcode>[]);
+          _order = <String>[];
           return;
         }
         // Suppress updates while the user is dragging to prevent snap-back
@@ -112,6 +121,20 @@ class MFAOrderController extends AsyncNotifier<List<TOTPcode>> {
     state = AsyncData(current);
     _order = current.map(_codeKey).toList();
     _debouncedSave(current);
+  }
+
+  void removeCode(TOTPcode code) {
+    final current = (state.valueOrNull ?? <TOTPcode>[]).toList();
+    current.removeWhere((c) => _codeKey(c) == _codeKey(code));
+    state = AsyncData(current);
+    _order = current.map(_codeKey).toList();
+    _debouncedSave(current);
+  }
+
+  void clearAll() {
+    state = AsyncData(<TOTPcode>[]);
+    _order = <String>[];
+    _debouncedSave(<TOTPcode>[]);
   }
 
   List<TOTPcode> _reconcile(

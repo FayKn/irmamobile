@@ -6,7 +6,6 @@ import 'package:irmamobile/src/models/mfa_events.dart';
 import 'package:irmamobile/src/models/session.dart';
 import 'package:irmamobile/src/screens/mfa/mfa_tab.dart';
 import 'package:irmamobile/src/screens/mfa/widgets/code_export_card.dart';
-import 'package:irmamobile/src/screens/mfa/widgets/delete_button.dart';
 import 'package:irmamobile/src/screens/mfa/widgets/totp_card.dart';
 import 'package:irmamobile/src/screens/scanner/scanner_screen.dart';
 import 'package:irmamobile/src/widgets/yivi_themed_button.dart';
@@ -144,15 +143,8 @@ main() {
       expect(find.text('TestIssuer'), findsOneWidget);
       // swipe left to reveal delete button
       final codeCardFinder = find.byType(TotpCard).first;
-      await tester.drag(find.byType(TotpCard), const Offset(-100.0, 0.0));
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.drag(codeCardFinder, const Offset(-500, 0));
 
-      // tap delete button
-      final deleteButtonFinder = find.descendant(
-        of: codeCardFinder,
-        matching: find.byType(DeleteButton),
-      );
-      await tester.tap(deleteButtonFinder);
       await tester.pump(const Duration(milliseconds: 500));
 
       // confirm deletion

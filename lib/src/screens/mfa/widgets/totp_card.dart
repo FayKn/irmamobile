@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../theme/theme.dart';
+import '../../../widgets/irma_themed_button.dart';
 import '../../../widgets/translated_text.dart';
-import 'delete_button.dart';
 import 'service_icon.dart';
 
 class TotpCard extends StatefulWidget {
@@ -49,23 +49,36 @@ class _TotpCardState extends State<TotpCard> {
     });
   }
 
-  void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    // Reveal on left swipe, hide on right swipe.
-    const threshold = 10; // pixels per update
-    if (details.delta.dx < -threshold && !_deleteVisible) {
-      setState(() => _deleteVisible = true);
-    } else if (details.delta.dx > threshold && _deleteVisible) {
-      setState(() => _deleteVisible = false);
-    }
+  Future<bool?> confirmationDialogue(BuildContext context) {
+    return showDialog<bool?>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(content: TranslatedText('mfa.delete.title'), actions: <Widget>[
+            Column(spacing: IrmaTheme.of(context).smallSpacing, children: [
+              IrmaThemedButton(
+                label: 'mfa.delete.decline',
+                onPressed: () => Navigator.pop(context),
+                color: IrmaTheme.of(context).themeData.colorScheme.secondary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                isSecondary: true,
+              ),
+              IrmaThemedButton(
+                label: 'mfa.delete.confirm',
+                onPressed: () => Navigator.pop(context, true),
+                color: IrmaTheme.of(context).themeData.colorScheme.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ]),
+          ]);
+        });
   }
 
-  void _delete(bool confirmed) {
+  Future<void> _delete() async {
+    var confirmed = await confirmationDialogue(context) ?? false;
+
     if (confirmed) {
       widget.onDelete();
     }
-    setState(() {
-      _deleteVisible = false;
-    });
   }
 
   @override
@@ -84,7 +97,6 @@ class _TotpCardState extends State<TotpCard> {
 
     return GestureDetector(
       onTap: () => _handleTapCopyOrDismiss(stringCurrentCode),
-      onHorizontalDragUpdate: _onHorizontalDragUpdate,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: theme.borderRadius,
@@ -98,90 +110,96 @@ class _TotpCardState extends State<TotpCard> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: theme.borderRadius,
-          child: Stack(
-            children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                // Timer bar
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 1000),
-                  curve: Curves.linear,
-                  color: theme.primary,
-                  alignment: Alignment.topLeft,
-                  width: containerWidth - (widget.timerProgress / widget.period) * containerWidth,
-                  height: 5,
-                ),
+            borderRadius: theme.borderRadius,
+            child: Dismissible(
+              confirmDismiss: (_) async {
+                await _delete();
+                return false;
+              },
+              key: ValueKey(widget.serviceName + widget.userName),
+              background: Container(color: theme.error),
+              direction: DismissDirection.endToStart,
+              child: Stack(
+                children: [
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    // Timer bar
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 1000),
+                      curve: Curves.linear,
+                      color: theme.primary,
+                      alignment: Alignment.topLeft,
+                      width: containerWidth - (widget.timerProgress / widget.period) * containerWidth,
+                      height: 5,
+                    ),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: theme.defaultSpacing,
-                    vertical: theme.smallSpacing,
-                  ),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Row(spacing: theme.defaultSpacing, children: [
-                          ServiceIcon(iconName: widget.serviceName.isNotEmpty ? widget.serviceName : widget.userName),
-                          Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(
-                                widget.serviceName,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              Text(
-                                widget.userName,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontSize: 12,
-                                  decoration: TextDecoration.underline,
-                                  color: theme.neutralExtraDark,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: theme.defaultSpacing,
+                        vertical: theme.smallSpacing,
+                      ),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Row(spacing: theme.defaultSpacing, children: [
+                              ServiceIcon(
+                                  iconName: widget.serviceName.isNotEmpty ? widget.serviceName : widget.userName),
+                              Expanded(
+                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                  Text(
+                                    widget.serviceName,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  Text(
+                                    widget.userName,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontSize: 12,
+                                      decoration: TextDecoration.underline,
+                                      color: theme.neutralExtraDark,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ]),
                               ),
                             ]),
                           ),
-                        ]),
+                          Row(spacing: theme.smallSpacing, children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  stringCurrentCode,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TranslatedText(
+                                  'mfa.nextCode',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontSize: 10,
+                                    color: theme.neutralExtraDark,
+                                  ),
+                                  translationParams: {'code': stringNextCode},
+                                ),
+                              ],
+                            ),
+                            _showCopyCheckmark
+                                ? Icon(Icons.check, color: theme.success)
+                                : Icon(Icons.copy, color: theme.neutralExtraDark),
+                          ]),
+                        ],
                       ),
-                      Row(spacing: theme.smallSpacing, children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              stringCurrentCode,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TranslatedText(
-                              'mfa.nextCode',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 10,
-                                color: theme.neutralExtraDark,
-                              ),
-                              translationParams: {'code': stringNextCode},
-                            ),
-                          ],
-                        ),
-                        _showCopyCheckmark
-                            ? Icon(Icons.check, color: theme.success)
-                            : Icon(Icons.copy, color: theme.neutralExtraDark),
-                      ]),
-                    ],
-                  ),
-                ),
-              ]),
-
-              // Delete overlay
-              DeleteButton(onDelete: _delete, deleteVisible: _deleteVisible),
-            ],
-          ),
-        ),
+                    ),
+                  ]),
+                ],
+              ),
+            )),
       ),
     );
   }
