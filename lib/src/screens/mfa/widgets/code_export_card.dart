@@ -5,7 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../theme/theme.dart';
 import '../mfa_export_tab.dart';
-import 'simple_icons.dart';
+import 'service_icon.dart';
 
 class CodeExportcard extends StatefulWidget {
   final TOTPStoredWithUrl code;
@@ -41,7 +41,7 @@ class _CodeExportCardState extends State<CodeExportcard> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(children: [
-                SimpleIcon(iconName: widget.code.issuer, width: 80, height: 80),
+                ServiceIcon(iconName: widget.code.issuer, width: 80, height: 80),
                 Text(
                   widget.code.issuer,
                   style: theme.textTheme.titleMedium?.copyWith(

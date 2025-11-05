@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/translated_text.dart';
 import 'delete_button.dart';
-import 'simple_icons.dart';
+import 'service_icon.dart';
 
 class TotpCard extends StatefulWidget {
   final String serviceName;
@@ -121,7 +121,7 @@ class _TotpCardState extends State<TotpCard> {
                     children: [
                       Flexible(
                         child: Row(spacing: theme.defaultSpacing, children: [
-                          SimpleIcon(iconName: widget.serviceName),
+                          ServiceIcon(iconName: widget.serviceName),
                           Expanded(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Text(
