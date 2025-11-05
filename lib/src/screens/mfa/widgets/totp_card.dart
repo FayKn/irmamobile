@@ -122,14 +122,16 @@ class _TotpCardState extends State<TotpCard> {
               child: Stack(
                 children: [
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    // Timer bar
-                    AnimatedContainer(
+                    // timer bar
+                    AnimatedSlide(
+                      offset: Offset(-(widget.timerProgress / widget.period), 0),
                       duration: const Duration(milliseconds: 1000),
                       curve: Curves.linear,
-                      color: theme.primary,
-                      alignment: Alignment.topLeft,
-                      width: containerWidth - (widget.timerProgress / widget.period) * containerWidth,
-                      height: 5,
+                      child: Container(
+                        width: containerWidth,
+                        height: 5,
+                        color: theme.primary,
+                      ),
                     ),
 
                     Padding(
