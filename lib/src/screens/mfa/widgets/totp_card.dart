@@ -117,7 +117,12 @@ class _TotpCardState extends State<TotpCard> {
                 return false;
               },
               key: ValueKey(widget.serviceName + widget.userName),
-              background: Container(color: theme.error),
+              background: Container(
+                  color: theme.error,
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: theme.defaultSpacing),
+                      child: Icon(Icons.delete, color: Color(0xFFFFC1C1), size: 30),
+              ),
               direction: DismissDirection.endToStart,
               child: Stack(
                 children: [
