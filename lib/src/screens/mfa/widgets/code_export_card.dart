@@ -41,7 +41,11 @@ class _CodeExportCardState extends State<CodeExportcard> {
             children: [
               Expanded(
                 child: Column(children: [
-                  ServiceIcon(iconName: widget.code.issuer, width: 80, height: 80),
+                  ServiceIcon(
+                    iconName: widget.code.issuer.isNotEmpty ? widget.code.issuer : widget.code.userAccount,
+                    width: 80,
+                    height: 80,
+                  ),
                   Text(
                     widget.code.issuer,
                     style: theme.textTheme.titleMedium?.copyWith(

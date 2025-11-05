@@ -121,7 +121,7 @@ class _TotpCardState extends State<TotpCard> {
                     children: [
                       Flexible(
                         child: Row(spacing: theme.defaultSpacing, children: [
-                          ServiceIcon(iconName: widget.serviceName),
+                          ServiceIcon(iconName: widget.serviceName.isNotEmpty ? widget.serviceName : widget.userName),
                           Expanded(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Text(

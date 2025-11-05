@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../theme/theme.dart';
 import '../../../util/simple_icon_utils.dart';
+import '../../../widgets/irma_avatar.dart';
 
 class ServiceIcon extends StatefulWidget {
   final String iconName;
@@ -20,50 +22,28 @@ class ServiceIcon extends StatefulWidget {
   State<ServiceIcon> createState() => _ServiceIconState();
 }
 
-// taken and adapted from https://stackoverflow.com/a/16348977
-Color stringToColor(String str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    final code = str.codeUnitAt(i);
-    hash = code + ((hash << 5) - hash);
-  }
+String getInitials(String name) {
+  if (name.isEmpty) return '?'; // fallback for empty names, should not happen usually since we either send the issuer or user account
 
-  var color = '#';
-  for (var i = 0; i < 3; i++) {
-    final value = (hash >> (i * 8)) & 0xFF;
-    color += value.toRadixString(16).padLeft(2, '0');
+  if (name.contains('-')) {
+    var parts = name.split('-');
+    return parts.map((part) => part.isNotEmpty ? part[0].toUpperCase() : '').join();
+  } else if (name.contains(' ')) {
+    var parts = name.split(' ');
+    return parts.map((part) => part.isNotEmpty ? part[0].toUpperCase() : '').join();
+  } else if (name.length >= 2) {
+    return name.substring(0, 2).toUpperCase();
+  } else {
+    return name[0].toUpperCase();
   }
-
-  return Color(int.parse('0xFF${color.substring(1)}'));
 }
 
-Widget placeHolderCircle(ServiceIcon widget) {
-  String firstIconLetter = widget.iconName.isNotEmpty ? widget.iconName[0].toUpperCase() : '';
-  Color bgColor = widget.iconName.isNotEmpty ? stringToColor(widget.iconName) : Colors.grey;
+Widget placeHolderCircle(ServiceIcon widget, Color color) {
+  String initials = getInitials(widget.iconName);
 
-  return Container(
-    width: widget.width,
-    height: widget.height,
-    decoration: BoxDecoration(
-      color: bgColor,
-      shape: BoxShape.circle,
-    ),
-    child: Center(
-      child: firstIconLetter.isNotEmpty
-          ? Text(
-              firstIconLetter,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: widget.width / 2,
-                fontWeight: FontWeight.bold,
-              ),
-            )
-          : Icon(
-              Icons.person,
-              color: Colors.white,
-              size: widget.width / 2,
-            ),
-    ),
+  return IrmaAvatar(
+    size: widget.width < widget.height ? widget.width : widget.height,
+    initials: initials,
   );
 }
 
@@ -87,8 +67,9 @@ class _ServiceIconState extends State<ServiceIcon> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = IrmaTheme.of(context);
     if (!_loaded) {
-      return placeHolderCircle(widget);
+      return placeHolderCircle(widget, theme.neutralExtraLight);
     }
     Color iconColor = Color(int.parse('0xFF$_colorHex'));
     return SvgPicture.asset(
@@ -97,7 +78,7 @@ class _ServiceIconState extends State<ServiceIcon> {
       height: widget.height,
       width: widget.width,
       colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-      placeholderBuilder: (BuildContext context) => placeHolderCircle(widget),
+      placeholderBuilder: (BuildContext context) => placeHolderCircle(widget, theme.neutralExtraLight),
     );
   }
 }
