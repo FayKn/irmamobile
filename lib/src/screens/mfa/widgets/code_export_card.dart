@@ -37,48 +37,55 @@ class _CodeExportCardState extends State<CodeExportcard> {
         spacing: theme.defaultSpacing,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(children: [
-                ServiceIcon(iconName: widget.code.issuer, width: 80, height: 80),
-                Text(
-                  widget.code.issuer,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 26,
-                  ),
-                ),
-                Text(
-                  widget.code.userAccount,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: 18,
-                    color: theme.neutralExtraDark,
-                  ),
-                ),
-              ]),
-              Spacer(flex: 1),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    codeBlurred = !codeBlurred;
-                  });
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ImageFiltered(
-                      imageFilter:
-                          codeBlurred ? ImageFilter.blur(sigmaX: 4, sigmaY: 4) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                      child: QrImageView(
-                        errorCorrectionLevel: QrErrorCorrectLevel.L,
-                        data: widget.code.url,
-                        version: QrVersions.auto,
-                        size: 150,
-                      ),
+              Expanded(
+                child: Column(children: [
+                  ServiceIcon(iconName: widget.code.issuer, width: 80, height: 80),
+                  Text(
+                    widget.code.issuer,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
                     ),
-                    Icon(codeBlurred ? Icons.touch_app : null, size: 80, color: theme.light),
-                  ],
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    widget.code.userAccount,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 18,
+                      color: theme.neutralExtraDark,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ]),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      codeBlurred = !codeBlurred;
+                    });
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ImageFiltered(
+                        imageFilter: codeBlurred
+                            ? ImageFilter.blur(sigmaX: 4, sigmaY: 4)
+                            : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                        child: QrImageView(
+                          errorCorrectionLevel: QrErrorCorrectLevel.L,
+                          data: widget.code.url,
+                          version: QrVersions.auto,
+                          size: 150,
+                        ),
+                      ),
+                      Icon(codeBlurred ? Icons.touch_app : null, size: 80, color: theme.light),
+                    ],
+                  ),
                 ),
               )
             ],
