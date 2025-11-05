@@ -647,7 +647,8 @@
       "password_popup_confirm": "Save",
       "import_file": "Import file",
       "as_file": "Export as file",
-      "as_google": "Export to Google Authenticator",
+      "as_google": "Export to single QR code",
+      "google_code_tab": "You can use this QR code to easily transfer between devices or to another app if it can import from Google Authenticator.",
       "explanation": "If you want to use another MFA app or want to make a backup, you can tap and hold the codes to do a mass export or scan the individual QR codes."
     },
     "manual": {

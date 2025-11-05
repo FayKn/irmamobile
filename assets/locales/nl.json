@@ -645,7 +645,8 @@
       "password_popup_confirm": "Opslaan",
       "import_file": "Importeer een bestand",
       "as_file":  "Exporteer als bestand",
-      "as_google": "Exporteer naar Google Authenticator",
+      "as_google": "Exporteer naar 1 QR-code",
+      "google_code_tab": "Je kan met deze QR-code gemakkelijk naar een andere telefoon of app verhuizen als deze Google Authenticator import ondersteunt.",
       "explanation": "Als je een andere MFA-app wilt gebruiken of een back-up wilt maken, kun je de codes ingedrukt houden om een export te doen van meerdere codes of de individuele QR-codes te scannen."
     },
     "manual": {

@@ -11,6 +11,7 @@ import '../../models/mfa_events.dart';
 import '../../providers/irma_repository_provider.dart';
 import '../../theme/theme.dart';
 import '../../widgets/irma_app_bar.dart';
+import '../../widgets/translated_text.dart';
 import 'mfa_export_tab.dart';
 
 class MfaExportGauthTab extends StatefulWidget {
@@ -56,20 +57,16 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
     _mfaRepo.exportTOTPToURL(codesSelected, isGoogle: true);
 
     try {
-      // Wait for the event with the codes
       final event =
           await _irmaRepo.getEvents().whereType<ExportSecretsToUrlEvent>().first.timeout(Duration(seconds: 1));
       setState(() {
         googleMigrationUrl = (event.urls!.isNotEmpty ? event.urls?.first : '')!;
-        // Handle the received URLs or data here
-        // For example, you might want to store them in a list
       });
     } catch (e) {
       debugPrint('Failed to fetch codes: $e');
     }
   }
 
-  // No separate URL list is needed: each stored entry contains its URL.
   @override
   Widget build(BuildContext context) {
     final theme = IrmaTheme.of(context);
@@ -85,6 +82,7 @@ class MfaExportGauthTabState extends State<MfaExportGauthTab> {
         child: Column(
           spacing: theme.defaultSpacing,
           children: [
+            TranslatedText('mfa.export.google_code_tab'),
             QrImageView(
               errorCorrectionLevel: QrErrorCorrectLevel.L,
               data: googleMigrationUrl,
